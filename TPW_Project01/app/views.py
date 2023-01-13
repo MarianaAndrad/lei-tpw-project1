@@ -15,7 +15,6 @@ def home(request):
             "friend":True,
             "posts": Post.objects.all().order_by("-date"),
             "profile": get_object_or_404(Profile, user=request.user),
-            "new_users": Profile.objects.all()[:5], #ALterar ainda
             "form_search": SearchForm(),
             "exist": True
         }
@@ -25,7 +24,7 @@ def home(request):
         ctx={
             "friend": False,
             "posts": Post.objects.all().order_by("-date"),
-            "comments_count": 0,
+            "comments_count": Comment.objects.all().count(),
             "form_search": SearchForm(),
             "exist": False
         }
@@ -50,7 +49,7 @@ def signup(request):
                     return render(request, "signup.html", {"messages": "Email already exists.", "formSignup": formSignup})
                 elif request.FILES:
                     photo = request.FILES["photo"]
-                    User.objects.create_user(user=user)
+                    user = User.objects.create_user(username=username, password=password, email=email)
                     profile = Profile.objects.create(user=user, profile_pic=photo)
                     profile.save()
                     auth_login(request, User.objects.get(username=username))
@@ -108,18 +107,16 @@ def profile(request):
         "profile": user,
         "user_posts": user,
         "posts": posts,
-        "following_count": 2,
-        "followers_count": 2,
+        "following_count": Follow.objects.filter(profile=user).count(),
+        "followers_count": Follow.objects.filter(following=user).count(),
         "form_search": SearchForm()
     }
     return render(request, "profile.html", ctx)
 
 def profileUtilizador(request,username):
-    print(username)
-    user_user = get_object_or_404(User, username = username)
-    user_posts = get_object_or_404(Profile, user = user_user)
+    user_posts = get_object_or_404(Profile, user__username = username)
 
-    if request.user.is_authenticated and request.user.username!="admin":
+    if request.user.is_authenticated:
         user = get_object_or_404(Profile, user=request.user)
     else:
         user = None
@@ -133,9 +130,9 @@ def profileUtilizador(request,username):
         "user_posts": user_posts,
         "posts": posts,
         "profile": user,
-        "is_follower": True,
-        "following_count": 1,
-        "followers_count": 1,
+        "is_follower": Follow.objects.filter(following=user_posts, profile=user).exists(),
+        "following_count": Follow.objects.filter(profile=user_posts).count(),
+        "followers_count": Follow.objects.filter(following=user_posts).count(),
         "form_search": SearchForm()
     }
 

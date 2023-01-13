@@ -5,11 +5,9 @@ from django.contrib.auth.models import User
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_pic = models.ImageField('Imagem de perfil', default='/img/userpicture.jpeg')
+    profile_pic = models.ImageField(upload_to='profile_pics', blank=True, default= 'default.png')
     bio = models.TextField('Biografia', max_length=500, blank=True)
-    # created_at = models.DateTimeField('Criado em', auto_now_add=True)
-    # updated_at = models.DateTimeField('Atualizado em', auto_now=True)
-
+    
     def update_image(self, file):
         self.profile_pic.storage.delete(self.profile_pic.name)
         self.profile_pic = file
