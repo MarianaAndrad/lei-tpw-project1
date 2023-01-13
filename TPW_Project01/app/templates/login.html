@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div>
+    <div class="lg:p-12 max-w-md max-w-xl lg:my-0 my-12 mx-auto p-6">
+        <h1 class="text-5xl font-bold mb-6 tracking-wider">Login</h1>
+
+        <iframe src='//randomgoat.com/embed.php' width='100%' height='400px' class="pb-2" frameBorder='0'></iframe>
+
+
+        <form action="." method="POST">
+            {% csrf_token %}
+
+
+            <div class="form-control mb-4">
+                <label class="input-group w-full input-group-lg">
+                    <span class="w-1/4">Username</span>
+                    <!-- <input type="text" placeholder="bobross" class="input input-bordered w-3/4" name="username"
+                        id="username" /> -->
+                        {{ formLogin.username }}
+                </label>
+            </div>
+
+            <div class="mb-4">
+                <label class="input-group w-full input-group-lg">
+                    <span class="w-1/4">Password </span>
+                    <!-- <input type="password" placeholder="********" class="input input-bordered w-3/4" name="password"
+                        id="password" /> -->
+                        {{ formLogin.password }}
+                </label>
+            </div>
+
+            <div class="mb-4">
+                <button class="btn btn-active btn-primary btn-wide w-full" type="submit">Submit</button>
+            </div>
+
+            <div class="text-center mt-5 space-x-2">
+                <p class="text-base"> Don't have an account? <a class="text-primary font-bold" href={% url 'signup' %}> Create a
+                        account</a></p>
+            </div>
+        </form>
+
+        {% if messages %}
+        <div class="alert alert-error shadow-lg mt-2">
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{messages}}</span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% endblock %}
+</div>

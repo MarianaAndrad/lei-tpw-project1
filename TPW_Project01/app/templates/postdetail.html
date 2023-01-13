@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="container mx-auto">
+        <div class="flex flex-row justify-between items-center pt-5">
+            <div>
+                <p class="text-4xl font-bold">{{ post.caption }}</p>
+                <div class="flex">
+                    <a class="font-bold pr-2" href="/profile/{{ post.profile.user.username }}" >{{ post.profile.user.username }}</a>
+                    <p class="font-extralight">{{ post.date|timesince }} </p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap space-x-3">
+                {% if exist_like %}
+                    <div class="card-actions justify-end">
+                        <button class="btn btn-outline btn-error btn-like btn-base" value="{{ post.id }}"
+                                id="btn_{{ post.id }}">
+                            {% if profile in post.likes.all %}
+                                <i class="fa-solid fa-heart fa-lg"></i>
+                            {% else %}
+                                <i class="fa-regular fa-heart fa-lg"></i>
+                            {% endif %}
+                        </button>
+                    </div>
+                {% endif %}
+
+                {% if profile.user.username == post.profile.user.username %}
+                    <a class="btn btn-outline btn-warning btn-base" href="{% url 'edit' post.id %}">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                    <a class="btn btn-outline btn-info btn-base" href="{% url 'deletepost' post.id %}">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <img class="w-full xl:w-1/2 mx-auto" src="{{ post.image.url }}" alt="post"/>
+        <div class="mb-3">
+            <span class="text-3xl mt-5 pr-2">Comentários</span>
+            <span class="font-extralight">( {{ post.comment_count }} )</span>
+        </div>
+
+        <div class="overflow-x-auto xl:w-1/2 w-full">
+            {% if profile.user.username or profile.user.username != "admin" %}
+                <form action="." method="POST">
+                    {% csrf_token %}
+                    <div class="form-control">
+                        {{ form_comment.comment }}
+                    </div>
+                </form>
+            {% endif %}
+            <div class="w-full flex flex-col pt-3">
+                {% for comment in comments %}
+                    <div class="flex space-x-3 items-center space-y-5">
+                        <div class="mask mask-squircle w-32">
+                            <img src="{{ comment.profile.profile_pic.url }}" class="object-contain" alt="Profile Picture"/>
+                        </div>
+                        <div class="w-28">
+                            <div class="font-bold">{{ comment.profile.user.username }}</div>
+                            <div class="text-sm opacity-50">{{ comment.date|timesince }}</div>
+                        </div>
+                        <div class="w-full break-all text-justify">{{ comment.comment }}</div>
+                        {% if profile.user.username == comment.profile.user.username or profile.user.username == post.profile.user.username %}
+                            <div class="flex flex-row justify-end">
+                                <form action="{% url 'deletecomment' post.id comment.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <button class="btn btn-error btn-sm w-12"><i class="fa-solid fa-lg fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).on('click', '.btn-like', function (e) {
+            e.preventDefault();
+            var post_id = $(this).val();
+
+            $.ajax({
+                url: '{% url "like_post" %}',
+                type: 'POST',
+                data: {
+                    'user_id': {{ profile.id }},
+                    'post_id': post_id,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'action': 'post'
+                },
+                success: function (json) {
+                    if (json['type'] === 'like') {
+                        document.getElementById("btn_" + post_id).innerHTML = '<i class="fa-solid fa-heart fa-lg"></i>';
+                        document.getElementById("count_" + post_id).innerHTML = json['result'];
+                    } else {
+                        document.getElementById("btn_" + post_id).innerHTML = '<i class="fa-regular fa-heart fa-lg"></i>';
+                        document.getElementById("count_" + post_id).innerHTML = json['result'];
+                    }
+                    console.log(json)
+                }
+            });
+        });
+    </script>
+{% endblock %}

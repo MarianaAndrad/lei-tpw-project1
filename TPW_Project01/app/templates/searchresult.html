@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+
+{% block content %}
+    <div class="container mx-auto">
+        <div class="flex flex-col gap-4 place-items-center">
+            {% if result %}
+                {% for result_user,following_count, followers_count in result %}
+                <!-- Card -->
+                    <div class="card bg-base-100 shadow-xl h-18 w-1/3">
+                        <a href="{% url 'profileUtilizador' result_user %}">
+                            <div class="flex flex-row">
+                                <div class="avatar pr-4 w-36">
+                                    <img src={{ result_user.profile_pic.url }}/>
+                                </div>
+                                <div class="flex flex-col">
+                                    <p class="font-semibold text-4xl pb-5">{{result_user}}</p>
+                                    <p class="text-lg"><span class="font-semibold ">Followers:</span> <span
+                                            id="followers">{{ followers_count }}</span></p>
+                                    <p class="text-lg"><span class="font-semibold ">Following:</span> <span
+                                            id="following">{{ following_count }}</span></p>
+                                </div>
+                            </div>
+                        </a> 
+                    </div> 
+                {% endfor %}
+            <!-- /Card -->
+            {% else %}
+                <p>No Results found</p>
+                <!-- <iframe src='//randomgoat.com/embed.php' width='500px' height='500px' class=" mx-auto"></iframe> -->
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        $(document).on('click', '#btn_follow', function (e) {
+            e.preventDefault();
+            var user_posts_id = $(this).val();
+    
+            $.ajax({
+                url: '{% url "follow" %}',
+                type: 'POST',
+                data: {
+                    'user_id': {{ profile.id }},
+                    'user_posts_id': user_posts_id,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'action': 'post'
+                },
+                success: function (json) {
+                    if (json['type'] == 'follow') {
+                        document.getElementById('btn_follow').innerHTML = 'Unfollow';
+                        document.getElementById('following').innerHTML = json['following'];
+                        document.getElementById('followers').innerHTML = json['followers'];
+                    } else {
+                        document.getElementById('btn_follow').innerHTML = 'Follow';
+                        document.getElementById('following').innerHTML = json['following'];
+                        document.getElementById('followers').innerHTML = json['followers'];
+                    }
+                    console.log(json)
+                }
+            });
+        });
+    </script>
+{% endblock %}

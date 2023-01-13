@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <div class="container mx-auto">
+        <div class="flex flex-col gap-4 place-items-center">
+            <form action="" method="post" enctype="multipart/form-data" class="w-1/2">
+                {% csrf_token %}
+                <div class="form-group py-4">
+                    <h5 class="font-semibold">Profile picture</h5>
+                    <div class="custom-file pt-4">
+                        {{ formImage.image }}
+                    </div>
+                </div>
+                <div class="form-group pt-4">
+                    <input class="btn btn-primary" type="submit" value="Update Picture">
+                </div>
+            </form>
+            <form action="" method="post" class="w-1/2">
+                {% csrf_token %}
+                <h5 class="font-semibold">Bio</h5>
+                <div class="form-group py-4">
+                    {{ formBio.bio }}
+                </div>
+                <div class="form-group pt-4">
+                    <input class="btn btn-primary" type="submit" value="Update Bio">
+                </div>
+            </form>
+
+            <form action="" method="post" class="w-1/2">
+                {% csrf_token %}
+                <div class="form-group py-4">
+                    <h5 class="font-semibold">Password</h5>
+                    <div class="custom-file pt-4">
+                        {{ formPassword.old_password }}
+                    </div>
+                    <div class="custom-file pt-4">
+                        {{ formPassword.new_password }}
+                    </div>
+                    <div class="custom-file pt-4">
+                        {{ formPassword.password_confirm }}
+                    </div>
+                </div>
+                <div class="form-group pt-4">
+                    <input class="btn btn-primary" type="submit" value="Change Password">
+                </div>
+            </form>
+            <div class="form-group pt-4">
+                <a href="{% url 'profile' %}" class="btn btn-error btn-wide">Cancel</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#bio").attr('value', '{{ user.bio }}');
+            $("#image").attr('value', '{{ user.image.url }}');
+        });
+    </script>
+
+
+{% endblock %}

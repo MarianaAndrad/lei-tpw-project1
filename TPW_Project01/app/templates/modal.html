@@ -1,0 +1,27 @@
+<input type="checkbox" id="my-modal-4" class="modal-toggle" />
+<label for="my-modal-4" class="modal cursor-pointer">
+    <label class="modal-box relative" for="">
+        <form action="{% url 'postadd' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <p class="mx-auto text-3xl font-bold mb-6 tracking-wider">New Post</p>
+            <div class="form-control w-full">
+                <label class="label">
+                    <span class="label-text font-bold">Caption</span>
+                </label>
+                <input type="text" placeholder="Caption" class="input input-bordered w-full" name="caption"
+                       id="caption"/>
+            </div>
+
+            <div class=" form-control">
+                <label class="label">
+                    <span class="label-text font-bold">Image</span>
+                </label>
+                <input type="file" class="file-input file-input-bordered file-input-primary w-full" name="photo"
+                       id="photo"/>
+            </div>
+            <div class="pt-4">
+                <button class="btn btn-active btn-primary btn-wide w-full" type="submit">Post</button>
+            </div>
+        </form>
+    </label>
+</label>

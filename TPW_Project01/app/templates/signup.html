@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div>
+    <div class="lg:p-12 max-w-md max-w-xl lg:my-0 my-12 mx-auto p-6">
+        <h1 class="text-5xl font-bold mb-6 tracking-wider">Sign In</h1>
+
+        {% if messages %}
+        <div class="alert alert-error shadow-lg mt-2">
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{messages}}</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-control w-full">
+                <label class="label">
+                    <span class="label-text font-bold">What is your name?</span>
+                </label>
+                <!-- <input type="text" placeholder="Username" class="input input-bordered w-full" type="text"
+                    name="username" id="username" /> -->
+                    {{ formSignup.username }}
+                    
+            </div>
+
+            <div class="form-control w-full">
+                <label class="label">
+                    <span class="label-text font-bold">What is your email address?</span>
+                </label>
+                <!-- <input type="text" placeholder="Email" class="input input-bordered w-full" type="email" name="email"
+                    id="email" /> -->
+                    {{ formSignup.email }}
+            </div>
+
+
+            <div class="form-control w-full">
+                <label class="label">
+                    <span class="label-text font-bold">What is your password?</span>
+                </label>
+                <!-- <input placeholder="Password" class="input input-bordered w-full" type="password" name="password"
+                    id="password" /> -->
+                    {{ formSignup.password }}
+            </div>
+
+            <div class="form-control w-full">
+                <label class="label">
+                    <span class="label-text font-bold">Confirm Password</span>
+                </label>
+                <!-- <input placeholder="Password confirmation" class="input input-bordered w-full" type="password"
+                    name="confirmation" id="password2" /> -->
+                    {{ formSignup.confirmation }}
+            </div>
+
+
+            <div class="form-control w-full">
+                <label class="label">
+                    <span class="label-text font-bold">What is your avatar?</span>
+                </label>
+                <!-- <input type="file" class="file-input file-input-bordered file-input-primary w-full" name="photo"
+                    id="photo" /> -->
+                    {{ formSignup.photo }}
+            </div>
+
+            <div class="mb-4 mt-4">
+                <button class="btn btn-active btn-primary btn-wide w-full" type="submit">Sign in</button>
+            </div>
+            
+            <div class="text-center mt-5 space-x-2">
+                <p class="text-base"> Do you have an account? <a class="text-primary font-bold"
+                        href="{% url 'login' %}"> Login </a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
