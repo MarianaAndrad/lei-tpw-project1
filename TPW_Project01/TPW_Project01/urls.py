@@ -31,6 +31,8 @@ urlpatterns = [
     path("profile/", views.profile, name="profile"),
     path("profile/<str:username>/", views.profileUtilizador, name="profileUtilizador"),
     path("profile/<str:username>/edit", views.editProfile, name="editProfile"),
+    path("profile/<str:username>/followers", views.listFollower, name="listFollower"),
+    path("profile/<str:username>/following", views.listFollowing, name="listFollowing"),
 
     path("postadd/", views.postadd, name="postadd"),
     path("post/<int:_id>/", views.postdetail, name="postdetail"),
@@ -43,6 +45,8 @@ urlpatterns = [
     path("post/<int:_id>/comment/<int:_id_comment>/delete/", views.commentdelete, name="deletecomment"),
     path("404/", views.error404, name="error404"),
     path("500/", views.error500, name="error500"),
+
+
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

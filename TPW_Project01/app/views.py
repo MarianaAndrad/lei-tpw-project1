@@ -312,6 +312,7 @@ def like(request):
         return JsonResponse({'result': result, 'type': type})
 
 def follow(request):
+    print("ola")
     if request.POST.get('action') == 'post':
         following = ''
         followers = ''
@@ -320,16 +321,16 @@ def follow(request):
         user = get_object_or_404(Profile, id=user_id)
         user_post = get_object_or_404(Profile, id=user_post_id)
         
-        if Follow.objects.filter(user=user, following=user_post).exists():
+        if Follow.objects.filter(profile=user, following=user_post).exists():
             print("unfollow")
-            Follow.objects.filter(user=user, following=user_post).delete()
+            Follow.objects.filter(profile=user, following=user_post).delete()
             type = 'unfollow'
-            following = Follow.objects.filter(user=user_post).count()
+            following = Follow.objects.filter(profile=user_post).count()
             followers = Follow.objects.filter(following=user_post).count()
         else:
-            Follow.objects.create(user=user, following=user_post)
+            Follow.objects.create(profile=user, following=user_post)
             type = 'follow'
-            following = Follow.objects.filter(user=user_post).count()
+            following = Follow.objects.filter(profile=user_post).count()
             followers = Follow.objects.filter(following=user_post).count()
         
         return JsonResponse({'type': type, 'following': following, 'followers': followers})
@@ -377,7 +378,6 @@ def searchuser(request):
     else:
         return redirect("searchresult")
 
-    
 def searchresult(request):
     ctx={"form_search": SearchForm()}
     try:
@@ -385,5 +385,40 @@ def searchresult(request):
         ctx["profile"]=user
     except ObjectDoesNotExist:
         user = None
+
+    return render(request, "searchresult.html", ctx)
+
+@login_required(login_url="/login/")
+def listFollower(request,username):
+    user = get_object_or_404(Profile, user__username=username)
+    followers = Follow.objects.filter(following=user)
+
+    result = []
+    for result_user in followers:
+        print(result_user)
+        following = Follow.objects.filter(profile=result_user.profile).count()
+        followers = Follow.objects.filter(following=result_user.profile).count()
+        result.append((result_user.profile,following,followers))
+    ctx = {
+        "form_search": SearchForm(),
+        "profile": user,
+        "result": result,
+    }
+    return render(request, "searchresult.html", ctx)
+
+@login_required(login_url="/login/")
+def listFollowing(request,username):
+    user = get_object_or_404(Profile, user__username=username)
+    followings = Follow.objects.filter(profile=user)
+    result = []
+    for result_user in followings:
+        following = Follow.objects.filter(profile=result_user.following).count()
+        followers = Follow.objects.filter(following=result_user.following).count()
+        result.append((result_user.following,following,followers))
+    ctx = {
+        "form_search": SearchForm(),
+        "profile": user,
+        "result": result,
+    }
 
     return render(request, "searchresult.html", ctx)
