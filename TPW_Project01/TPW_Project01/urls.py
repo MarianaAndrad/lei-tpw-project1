@@ -45,6 +45,7 @@ urlpatterns = [
     path("post/<int:_id>/comment/<int:_id_comment>/delete/", views.commentdelete, name="deletecomment"),
     path("404/", views.error404, name="error404"),
     path("500/", views.error500, name="error500"),
+    path("search_filter/", views.search_filter, name= "search_filter"),
 
 
 

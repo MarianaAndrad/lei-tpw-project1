@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from app.forms import FormSingup, FormLogin, CommentForm, ImageForm, PasswordForm, BioForm, EditPostForm, SearchForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
-from app.models import Profile, Post, Comment, Follow
+from app.models import Profile, Post, Comment, Follow,Hashtag
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
@@ -422,3 +422,33 @@ def listFollowing(request,username):
     }
 
     return render(request, "searchresult.html", ctx)
+
+def search_filter(request):
+    if request.method == "GET":
+        query = request.GET.get('q')
+        min_likes = request.GET.get('min_likes')
+        max_likes = request.GET.get('max_likes')
+        min_date = request.GET.get('min_date')
+        max_date = request.GET.get('max_date')
+        min_comments = request.GET.get('min_comments')
+        max_comments = request.GET.get('max_comments')
+        posts = Post.objects.all()
+        hashtags = Hashtag.objects.all()
+        if query:
+            posts = posts.filter(caption__contains=query)
+        if min_likes:
+            posts = posts.filter(like_count__gte=min_likes)
+        if max_likes:
+            posts = posts.filter(like_count__lte=max_likes)
+        if min_date:
+            posts = posts.filter(date__gte=min_date)
+        if max_date:
+            posts = posts.filter(date__lte=max_date)
+        if min_comments:
+            posts = posts.filter(comment_count__gte=min_comments)
+        if max_comments:
+            posts = posts.filter(comment_count__lte=max_comments)
+
+        context = {'posts': posts, "hashtags":hashtags, "form_search": SearchForm()}
+
+        return render(request, 'filter.html', context)

@@ -1,0 +1,159 @@
+{% extends "layout.html" %}
+{% block content %}
+<form method="get" action="{% url 'search_filter' %}">
+<div class="flex flex-row my-auto gap-3 justify-between my-auto">
+    <div class="my-auto">
+        <p>
+            <span class="text-md ">Hot</span>
+            <input type="radio" name="radio-9" class="radio radio-primary" checked/>
+        </p>
+        <p>
+            <span class="text-md">Fresh</span>
+            <input type="radio" name="radio-9" class="radio radio-primary"/>
+            
+        </p>
+    </div>
+
+    <label class="label gap-2">
+        <span class="label-text">Reino Animal</span>
+
+        <select class="select select-primary ">
+            <option disabled selected>Reino Animal</option>
+            <option>Mammals</option>
+            <option>Birds</option>
+            <option>Reptiles</option>
+            <option>Amphibians</option>
+            <option>Fish</option>
+            <option>Invertebrates</option>
+        </select>
+    </label>
+
+    <label class="label gap-2">
+        <span class="label-text">Data inicial</span>
+        <input type="date" class="input input-primary input-bordered" placeholder="Date"  id="min_date" name="min_date" value="{{ request.GET.min_date }}">
+    </label>
+    <label class="label gap-2">
+        <span class="label-text">Data Final</span>
+        <input type="date" class="input input-primary input-bordered" placeholder="Date"  id="max_date" name="max_date" value="{{ request.GET.max_date }}">
+    </label>
+</div>
+<label class="label">
+    <span class="label-text">Hashtags</span>
+</label>
+
+<div class="grid grid-cols-3 gap-4">
+    {% for hashtag in hashtags %}
+    <label class="cursor-pointer">
+        <span class="text-lg">#{{ hashtag }}</span>
+        <input type="checkbox" class="checkbox checkbox-primary"/>
+    </label>
+    {% endfor %}
+
+</div>
+<button class="btn btn-outline btn-primary btn-wide">Search</button>
+<!-- 
+    <div>
+        <label for="q">Search Description:</label>
+        <input type="text" id="q" name="q" value="{{ request.GET.q }}">
+    </div>
+    <div>
+        <label for="min_likes">Minimum Likes:</label>
+        <input type="number" id="min_likes" name="min_likes" value="{{ request.GET.min_likes }}">
+    </div>
+    <div>
+        <label for="max_likes">Maximum Likes:</label>
+        <input type="number" id="max_likes" name="max_likes" value="{{ request.GET.max_likes }}">
+    </div>
+    <div>
+        <label for="min_comments">Minimum Comments:</label>
+        <input type="number" id="min_comments" name="min_comments" value="{{ request.GET.min_comments }}">
+    </div>
+    <div>
+        <label for="max_comments">Maximum Comments:</label>
+        <input type="number" id="max_comments" name="max_comments" value="{{ request.GET.max_comments }}">
+    </div> -->
+</form>
+
+
+<div class="space-y-5 flex-shrink-0 lg:w-7/12">
+    {% for post in posts %}
+        <div class="card w-3/4 bg-base-100 shadow-2xl mx-auto mb-4">
+            <a href="/post/{{ post.id }}">
+                <img src={{ post.image.url }}/>
+                <div class="card-body">
+                    <h2 class="card-title text-4xl">{{post.caption}}</h2>
+
+                    <div class="flex items-center justify-between">
+                    <div class="flex flex-row items-center">
+                        <a class="font-bold pr-2" href="/profile/{{ post.profile.user.username }}" >{{post.profile.user.username}}</a>
+                        <small class="font-light"> {{ post.date|timesince }}</small>
+                    </div>
+                        <div class="card-actions justify-end">
+                            {% if exist %}
+                                <label class="btn btn-circle btn-outline btn-primary w-24">
+                                    <i class="fa-solid fa-comment fa-lg"></i>
+                                    <span class="pl-2">{{ post.comment_count }}</span>
+                                </label>
+                            {% else %}
+                                <a href="/login">
+                                    <label class="btn btn-circle btn-outline btn-primary w-24">
+                                        <i class="fa-solid fa-comment fa-lg"></i>
+                                        <span class="pl-2">{{ post.comment_count }}</span>
+                                    </label>
+                                </a>
+                            {% endif %}
+                            {% if exist %}
+                                <button class="btn btn-outline btn-error btn-like w-24" value="{{ post.id }}"
+                                        id="btn_{{ post.id }}">
+                                        {% if profile in post.likes.all %}
+                                            <i class="fa-solid fa-heart fa-lg"></i>
+                                        {% else %}
+                                            <i class="fa-regular fa-heart fa-lg"></i>
+                                        {% endif %}
+                                    <span id="count_{{ post.id }}" class="pl-2">{{ post.like_count }}</span>
+                                </button>
+                            {% else %}
+                                <a href="/login">
+                                    <label class="btn btn-outline btn-error w-24">
+                                            <i class="fa-regular fa-heart fa-lg"></i>
+                                        <span id="count_{{ post.id }}" class="pl-2">{{ post.like_count }}</span>
+                                    </label>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+    $(document).on('click', '.btn-like', function (e) {
+        e.preventDefault();
+        var post_id = $(this).val();
+
+        $.ajax({
+            url: '{% url "like_post" %}',
+            type: 'POST',
+            data: {
+                'user_id': {{ profile.id }},
+                'post_id': post_id,
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'action': 'post'
+            },
+            success: function (json) {
+                if (json['type'] == 'like') {
+                    var button = document.getElementById('btn_' + post_id);
+                    button.innerHTML = '<i class="fa-solid fa-heart fa-lg"></i><span class="pl-2">' + json['result'] + '</span>';
+                } else {
+                    var button = document.getElementById('btn_' + post_id);
+                    button.innerHTML = '<i class="fa-regular fa-heart fa-lg"></i><span class="pl-2">' + json['result'] + '</span>';
+                }
+                console.log(json)
+            }
+        });
+    });
+</script>
+
+{% endblock %}
