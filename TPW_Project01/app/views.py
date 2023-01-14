@@ -15,8 +15,8 @@ def home(request):
             "friend":True,
             "profile": get_object_or_404(Profile, user=request.user),
             "posts": Post.objects.all().order_by("-date").filter(categoria=get_object_or_404(Profile, user=request.user).categoria),
-            "form_search": SearchForm(),
             "hashtags": Hashtag.objects.all(),
+            "categorias": Categoria.objects.all(),
             "exist": True
         }
 
@@ -25,12 +25,32 @@ def home(request):
         ctx={
             "friend": False,
             "posts": Post.objects.all().order_by("-date"),
-            "comments_count": Comment.objects.all().count(),
-            "form_search": SearchForm(),
+            "categorias": Categoria.objects.all(),
             "exist": False
         }
         return render(request, "home.html", ctx)
 
+def home_categoria(request, _id):
+    if request.user.is_authenticated:
+        ctx = {
+            "friend":True,
+            "profile": get_object_or_404(Profile, user=request.user),
+            "posts": Post.objects.all().order_by("-date").filter(categoria=_id),
+            "hashtags": Hashtag.objects.all(),
+            "categorias": Categoria.objects.all(),
+            "exist": True
+        }
+
+        return render(request, "home.html", ctx)
+    else:
+        ctx={
+            "friend": False,
+            "posts": Post.objects.all().order_by("-date").filter(categoria=_id),
+            "categorias": Categoria.objects.all(),
+            "exist": False
+        }
+        return render(request, "home.html", ctx)
+    
 # *User
 def signup(request):
     if request.method == "POST":
@@ -50,7 +70,7 @@ def signup(request):
                 elif User.objects.filter(email=email).exists():
                     return render(request, "signup.html", {"messages": "Email already exists.", "formSignup": formSignup})
                 elif categoria == None:
-                    return render(request, "signup.html", {"messages": "Seleciona Categoria", "formSignup": formSignup, "form_search": SearchForm()})
+                    return render(request, "signup.html", {"messages": "Seleciona Categoria", "formSignup": formSignup})
                 elif request.FILES:
                     photo = request.FILES["photo"]
                     user = User.objects.create_user(username=username, password=password, email=email)
@@ -67,12 +87,12 @@ def signup(request):
                     return redirect("home")
 
             else:
-                return render(request, "signup.html", {"messages": "Passwords do not match.", "formSignup": formSignup, "form_search": SearchForm()})
+                return render(request, "signup.html", {"messages": "Passwords do not match.", "formSignup": formSignup})
         else:
-            return render(request, "signup.html", {"messages": "Invalid credentials.", "formSignup": formSignup, "form_search": SearchForm()})
+            return render(request, "signup.html", {"messages": "Invalid credentials.", "formSignup": formSignup})
 
     else:
-        return render(request, "signup.html", {"formSignup": FormSingup(), "form_search": SearchForm()})
+        return render(request, "signup.html", {"formSignup": FormSingup()})
 
 def login(request):
     if request.user.is_authenticated:
@@ -88,11 +108,11 @@ def login(request):
                     auth_login(request, user)
                     return redirect("home")
                 else:
-                    return render(request, "login.html", {"messages": "Invalid credentials.", "formLogin": formLogin, "form_search": SearchForm()})
+                    return render(request, "login.html", {"messages": "Invalid credentials.", "formLogin": formLogin,})
             else:
-                return render(request, "login.html", {"messages": "Invalid credentials.", "formLogin": formLogin, "form_search": SearchForm()})
+                return render(request, "login.html", {"messages": "Invalid credentials.", "formLogin": formLogin, })
         else:
-            return render(request, "login.html", {"formLogin": FormLogin(), "form_search": SearchForm()})
+            return render(request, "login.html", {"formLogin": FormLogin(),})
 
 @login_required(login_url='/login/')
 def logout(request):
@@ -114,7 +134,6 @@ def profile(request):
         "hashtags": Hashtag.objects.all(),
         "following_count": Follow.objects.filter(profile=user).count(),
         "followers_count": Follow.objects.filter(following=user).count(),
-        "form_search": SearchForm()
     }
     return render(request, "profile.html", ctx)
 
@@ -139,7 +158,6 @@ def profileUtilizador(request,username):
         "is_follower": Follow.objects.filter(following=user_posts, profile=user).exists(),
         "following_count": Follow.objects.filter(profile=user_posts).count(),
         "followers_count": Follow.objects.filter(following=user_posts).count(),
-        "form_search": SearchForm()
     }
 
     return render(request, "profile.html", ctx)
@@ -152,7 +170,6 @@ def editProfile(request, username):
     utilizador = get_object_or_404(Profile, user=request.user)
     ctx={
         "profile": utilizador,
-        "form_search": SearchForm(),
         "hashtags": Hashtag.objects.all(),
         }
 
@@ -230,7 +247,6 @@ def postdetail(request, _id):
         "comments": Comment.objects.filter(post=_id),
         "hashtags": Hashtag.objects.all(),
         "exist_like" : False,
-        "form_search": SearchForm()
     }
     post=get_object_or_404(Post, id=_id)
     if request.user.is_authenticated and request.user.username!="admin":
@@ -279,7 +295,6 @@ def postedit(request,_id):
             "post": post,
             "form_postedit": EditPostForm(),
             "profile": Profile.objects.get(user=request.user),
-            "form_search": SearchForm(),
             "hashtags": Hashtag.objects.all(),
         }
         if request.method == "POST":
@@ -352,7 +367,6 @@ def error404(request, exception):
     if request.user.is_authenticated and request.user.username!="admin":
         user = get_object_or_404(Profile, user=request.user)
     ctx = {
-        "form_search": SearchForm(),
         "exception": exception,
         "profile": user
     }
@@ -363,33 +377,59 @@ def error500(request):
     if request.user.is_authenticated and request.user.username!="admin":
         user = get_object_or_404(Profile, user=request.user)
     ctx = {
-        "form_search": SearchForm(),
         "profile": user
     }
     return render(request, '404.html',ctx)
 
 def searchuser(request):
+    ctx={
+    "form_search": SearchForm(),
+    "hashtags": Hashtag.objects.all(),
+    }
     if request.method == "POST":
         form_search = SearchForm(request.POST)
         if form_search.is_valid():
             search = form_search.cleaned_data["search"]
-            user = get_object_or_404(Profile, user=request.user)
-            users = Profile.objects.filter(user__username__icontains=search).exclude(user__username__icontains=request.user.username)
+            try:
+                user = get_object_or_404(Profile, user = request.user)
+                ctx["profile"] = user
+            except ObjectDoesNotExist:
+                user = None
+
+            if user is None:
+                users = Profile.objects.filter(user__username__icontains=search)
+            else:
+                users = Profile.objects.filter(user__username__icontains=search).exclude(user__username__icontains=request.user.username)
 
             result = []
             for result_user in users:
                 following = Follow.objects.filter(profile=result_user).count()
                 followers = Follow.objects.filter(following=result_user).count()
                 result.append((result_user,following,followers))
-            ctx = {
-                "form_search": SearchForm(),
-                "profile": user,
-                "result": result,
-                "hashtags": Hashtag.objects.all(),
-            }
+
+            ctx["result"]=result
             return render(request, "searchresult.html", ctx)
     else:
-        return redirect("searchresult")
+        try:
+            user = get_object_or_404(Profile, user = request.user)
+            ctx["profile"] = user
+        except ObjectDoesNotExist:
+            user = None
+
+        if user is None:
+            users = Profile.objects.all()
+        else:
+            users = Profile.objects.exclude(user__username__icontains=request.user.username)
+
+        result = []
+        for result_user in users:
+            following = Follow.objects.filter(profile=result_user).count()
+            followers = Follow.objects.filter(following=result_user).count()
+            result.append((result_user,following,followers))
+        
+        ctx["result"]=result
+            
+        return render(request, "searchresult.html", ctx)
 
 def searchresult(request):
     ctx={
@@ -471,30 +511,32 @@ def search_filter(request):
                 posts = posts.filter(hashtags=hashtag)
                 list_hashtags.append(hashtag.hashtag)
 
+
         context = {
             "hashtags": Hashtag.objects.all(), 
-            "form_search": SearchForm(),
             "number_comments":Comment.objects.all().count(),
             "number_likes":count_likes_total(),
             "list_hashtags": list_hashtags,
-            "profile":get_object_or_404(Profile,user=request.user),
             "categorias": Categoria.objects.all(),
             }
 
         if len(posts)!= 0:
             context["posts"] = posts
-            
+        
+        try:
+            user = Profile.objects.get(user__username=request.user.username)
+            context["profile"]=user
+        except ObjectDoesNotExist:
+            user = None
+
+
         return render(request, 'filter.html', context)
 
 
 def hashtag_list(request, hashtag):
-    print(hashtag)
-    hashtag = get_object_or_404(Hashtag, hashtag=hashtag)
-    posts = Post.objects.filter(hashtags=hashtag)
-
+    posts = Post.objects.filter(hashtags=get_object_or_404(Hashtag, hashtag=hashtag))
     ctx = {
-        'posts': posts, 
-        "form_search": SearchForm(),
+        'posts': posts,
         "hashtags": Hashtag.objects.all(),
         }
 
