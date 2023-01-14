@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from app.forms import FormSingup, FormLogin, CommentForm, ImageForm, PasswordForm, BioForm, EditPostForm, SearchForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
-from app.models import Profile, Post, Comment, Follow,Hashtag
+from app.models import Profile, Post, Comment, Follow,Hashtag, Categoria
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
@@ -447,6 +447,10 @@ def search_filter(request):
         min_date = request.GET.get('min_date')
         max_date = request.GET.get('max_date')
         comments = request.GET.get('comments')
+        categoria = request.GET.get('categoria')
+        if categoria == "0":
+            categoria = None
+        print(categoria)
         posts = Post.objects.all()
         if query:
             posts = posts.filter(caption__contains=query) 
@@ -458,9 +462,9 @@ def search_filter(request):
             posts = posts.filter(date__lte=max_date)
         if comments:
             posts = posts.filter(comment_count__gte=comments)
+        if categoria:
+            posts = posts.filter(categoria=categoria)
 
-
-        print(request.GET)
         list_hashtags=[]
         for hashtag in Hashtag.objects.all():
             if hashtag.hashtag in request.GET.keys():
@@ -468,14 +472,18 @@ def search_filter(request):
                 list_hashtags.append(hashtag.hashtag)
 
         context = {
-            'posts': posts, 
             "hashtags": Hashtag.objects.all(), 
             "form_search": SearchForm(),
             "number_comments":Comment.objects.all().count(),
             "number_likes":count_likes_total(),
             "list_hashtags": list_hashtags,
-            "profile":get_object_or_404(Profile,user=request.user)
+            "profile":get_object_or_404(Profile,user=request.user),
+            "categorias": Categoria.objects.all(),
             }
+
+        if len(posts)!= 0:
+            context["posts"] = posts
+            
         return render(request, 'filter.html', context)
 
 
