@@ -41,6 +41,9 @@
                         <img src={{ post.image.url }}/>
                         <div class="card-body">
                             <h2 class="card-title text-4xl">{{ post.caption }}</h2>
+                            {% for hashtag in post.hashtags.all %}
+                                <a class="font" href="/hashtag/{{hashtag}}">#{{hashtag.hashtag}}</a>
+                            {% endfor %}
 
                             <div class="flex items-center justify-between">
                                 <small class="font-light"> {{ post.date|timesince }}</small>
