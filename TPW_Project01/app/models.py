@@ -26,6 +26,12 @@ class Follow(models.Model):
     def __str__(self):
         return self.profile.user.username + " follows " + self.following.user.username
 
+class Hashtag(models.Model):
+    hashtag = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.hashtag
+
 class Post(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     caption = models.CharField(max_length=100)
@@ -34,6 +40,7 @@ class Post(models.Model):
     like_count = models.IntegerField(default=0)
     comment_count = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now_add=True)
+    hashtags = models.ManyToManyField(Hashtag, related_name='hashtags', blank=True)
 
     def __str__(self):
         return self.caption
