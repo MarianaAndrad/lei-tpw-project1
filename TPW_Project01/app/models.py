@@ -80,6 +80,7 @@ class Post(models.Model):
         self.comment_count -= 1
         super().save()
 
+
     class Meta:
         ordering = ['-date']
 

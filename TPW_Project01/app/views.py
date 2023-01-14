@@ -439,37 +439,40 @@ def listFollowing(request,username):
     return render(request, "searchresult.html", ctx)
 
 def search_filter(request):
-    if request.method == "GET":
-        query = request.GET.get('q')
-        min_likes = request.GET.get('min_likes')
-        max_likes = request.GET.get('max_likes')
+        query = request.GET.get('search')
+        likes = request.GET.get('likes')
         min_date = request.GET.get('min_date')
         max_date = request.GET.get('max_date')
-        min_comments = request.GET.get('min_comments')
-        max_comments = request.GET.get('max_comments')
+        comments = request.GET.get('comments')
         posts = Post.objects.all()
-        hashtags = Hashtag.objects.all()
         if query:
-            posts = posts.filter(caption__contains=query)
-        if min_likes:
-            posts = posts.filter(like_count__gte=min_likes)
-        if max_likes:
-            posts = posts.filter(like_count__lte=max_likes)
+            posts = posts.filter(caption__contains=query) 
+        if likes:
+            posts = posts.filter(like_count__gte=likes)
         if min_date:
             posts = posts.filter(date__gte=min_date)
         if max_date:
             posts = posts.filter(date__lte=max_date)
-        if min_comments:
-            posts = posts.filter(comment_count__gte=min_comments)
-        if max_comments:
-            posts = posts.filter(comment_count__lte=max_comments)
+        if comments:
+            posts = posts.filter(comment_count__gte=comments)
+
+
+        print(request.GET)
+        list_hashtags=[]
+        for hashtag in Hashtag.objects.all():
+            if hashtag.hashtag in request.GET.keys():
+                posts = posts.filter(hashtags=hashtag)
+                list_hashtags.append(hashtag.hashtag)
 
         context = {
             'posts': posts, 
-            "hashtags":hashtags, 
-            "form_search": SearchForm()
+            "hashtags": Hashtag.objects.all(), 
+            "form_search": SearchForm(),
+            "number_comments":Comment.objects.all().count(),
+            "number_likes":count_likes_total(),
+            "list_hashtags": list_hashtags,
+            "profile":get_object_or_404(Profile,user=request.user)
             }
-
         return render(request, 'filter.html', context)
 
 
@@ -491,3 +494,13 @@ def hashtag_list(request, hashtag):
         user = None
 
     return render(request, 'home.html', ctx)
+
+
+# *Funções auxiliares*
+
+def count_likes_total():
+    posts =Post.objects.all()
+    count = 0
+    for post in posts:
+        count += post.like_count
+    return count

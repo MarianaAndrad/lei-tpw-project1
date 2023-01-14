@@ -1,6 +1,6 @@
 
 from django import forms
-from app.models import Profile
+from app.models import Hashtag, Profile
 
 # *** This is the form for the user to register ***
 class FormSingup(forms.Form):
