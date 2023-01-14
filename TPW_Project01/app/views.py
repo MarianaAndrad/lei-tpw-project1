@@ -108,6 +108,7 @@ def profile(request):
         "profile": user,
         "user_posts": user,
         "posts": posts,
+        "hashtags": Hashtag.objects.all(),
         "following_count": Follow.objects.filter(profile=user).count(),
         "followers_count": Follow.objects.filter(following=user).count(),
         "form_search": SearchForm()
@@ -131,6 +132,7 @@ def profileUtilizador(request,username):
         "user_posts": user_posts,
         "posts": posts,
         "profile": user,
+        "hashtags": Hashtag.objects.all(),
         "is_follower": Follow.objects.filter(following=user_posts, profile=user).exists(),
         "following_count": Follow.objects.filter(profile=user_posts).count(),
         "followers_count": Follow.objects.filter(following=user_posts).count(),
@@ -147,7 +149,8 @@ def editProfile(request, username):
     utilizador = get_object_or_404(Profile, user=request.user)
     ctx={
         "profile": utilizador,
-        "form_search": SearchForm()
+        "form_search": SearchForm(),
+        "hashtags": Hashtag.objects.all(),
         }
 
     if request.method == "POST" and 'image' in request.FILES:
@@ -222,6 +225,7 @@ def postdetail(request, _id):
     ctx = {
         "post": post,
         "comments": Comment.objects.filter(post=_id),
+        "hashtags": Hashtag.objects.all(),
         "exist_like" : False,
         "form_search": SearchForm()
     }
@@ -272,7 +276,8 @@ def postedit(request,_id):
             "post": post,
             "form_postedit": EditPostForm(),
             "profile": Profile.objects.get(user=request.user),
-            "form_search": SearchForm()
+            "form_search": SearchForm(),
+            "hashtags": Hashtag.objects.all(),
         }
         if request.method == "POST":
             form_postedit = EditPostForm(request.POST, request.FILES)
@@ -377,13 +382,17 @@ def searchuser(request):
                 "form_search": SearchForm(),
                 "profile": user,
                 "result": result,
+                "hashtags": Hashtag.objects.all(),
             }
             return render(request, "searchresult.html", ctx)
     else:
         return redirect("searchresult")
 
 def searchresult(request):
-    ctx={"form_search": SearchForm()}
+    ctx={
+        "form_search": SearchForm(),
+        "hashtags": Hashtag.objects.all(),
+        }
     try:
         user = Profile.objects.get(user__username=request.user.username)
         ctx["profile"]=user
@@ -407,6 +416,7 @@ def listFollower(request,username):
         "form_search": SearchForm(),
         "profile": user,
         "result": result,
+        "hashtags": Hashtag.objects.all(),
     }
     return render(request, "searchresult.html", ctx)
 
@@ -423,6 +433,7 @@ def listFollowing(request,username):
         "form_search": SearchForm(),
         "profile": user,
         "result": result,
+        "hashtags": Hashtag.objects.all(),
     }
 
     return render(request, "searchresult.html", ctx)
@@ -453,6 +464,30 @@ def search_filter(request):
         if max_comments:
             posts = posts.filter(comment_count__lte=max_comments)
 
-        context = {'posts': posts, "hashtags":hashtags, "form_search": SearchForm()}
+        context = {
+            'posts': posts, 
+            "hashtags":hashtags, 
+            "form_search": SearchForm()
+            }
 
         return render(request, 'filter.html', context)
+
+
+def hashtag_list(request, hashtag):
+    print(hashtag)
+    hashtag = get_object_or_404(Hashtag, hashtag=hashtag)
+    posts = Post.objects.filter(hashtags=hashtag)
+
+    ctx = {
+        'posts': posts, 
+        "form_search": SearchForm(),
+        "hashtags": Hashtag.objects.all(),
+        }
+
+    try:
+        user = Profile.objects.get(user__username=request.user.username)
+        ctx["profile"]=user
+    except ObjectDoesNotExist:
+        user = None
+
+    return render(request, 'home.html', ctx)

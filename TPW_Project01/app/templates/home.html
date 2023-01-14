@@ -9,7 +9,7 @@
                         <div class="card-body">
                             <h2 class="card-title text-4xl">{{post.caption}}</h2>
                             {% for hashtag in post.hashtags.all %}
-                                <small class="font" >#{{hashtag.hashtag}}</small>
+                                <a class="font" href="/hashtag/{{hashtag}}">#{{hashtag.hashtag}}</a>
                             {% endfor %}
 
                             <div class="flex items-center justify-between">
@@ -19,10 +19,12 @@
                             </div>
                                 <div class="card-actions justify-end">
                                     {% if exist %}
-                                        <label class="btn btn-circle btn-outline btn-primary w-24">
-                                            <i class="fa-solid fa-comment fa-lg"></i>
-                                            <span class="pl-2">{{ post.comment_count }}</span>
-                                        </label>
+                                        <a href="/post/{{ post.id }}">
+                                            <label class="btn btn-circle btn-outline btn-primary w-24">
+                                                <i class="fa-solid fa-comment fa-lg"></i>
+                                                <span class="pl-2">{{ post.comment_count }}</span>
+                                            </label>
+                                        </a>
                                     {% else %}
                                         <a href="/login">
                                             <label class="btn btn-circle btn-outline btn-primary w-24">

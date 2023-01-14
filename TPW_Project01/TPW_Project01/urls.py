@@ -46,6 +46,7 @@ urlpatterns = [
     path("404/", views.error404, name="error404"),
     path("500/", views.error500, name="error500"),
     path("search_filter/", views.search_filter, name= "search_filter"),
+    path("hashtag/<str:hashtag>/",views.hashtag_list, name="hashtag_list"),
 
 
 
