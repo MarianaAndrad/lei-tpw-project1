@@ -4,7 +4,11 @@
     <div class="container mx-auto">
         <div class="flex flex-row justify-between items-center pt-5">
             <div>
-                <p class="text-4xl font-bold">{{ post.caption }}</p>
+                <a class="text-4xl font-bold" href="/post/{{post.id}}">{{ post.caption }}</a>
+                <p></p>
+                {% for hashtag in post.hashtags.all %}
+                    <a class="font" href="/hashtag/{{hashtag}}">#{{hashtag.hashtag}}</a>
+                {% endfor %}
                 <div class="flex">
                     <a class="font-bold pr-2" href="/profile/{{ post.profile.user.username }}" >{{ post.profile.user.username }}</a>
                     <p class="font-extralight">{{ post.date|timesince }} </p>
