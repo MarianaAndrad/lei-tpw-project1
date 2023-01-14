@@ -14,7 +14,7 @@ def home(request):
         ctx = {
             "friend":True,
             "profile": get_object_or_404(Profile, user=request.user),
-            "posts": Post.objects.all().order_by("-date"),
+            "posts": Post.objects.all().order_by("-date").filter(categoria=get_object_or_404(Profile, user=request.user).categoria),
             "form_search": SearchForm(),
             "hashtags": Hashtag.objects.all(),
             "exist": True
@@ -214,7 +214,7 @@ def postadd(request):
         caption = request.POST["caption"]
         photo = request.FILES["photo"]
         if caption and photo:
-            post = Post.objects.create(profile=profile, image=photo, caption=caption)
+            post = Post.objects.create(profile=profile, image=photo, caption=caption, categoria=profile.categoria)
             for hashtag in Hashtag.objects.all():
                 if hashtag.hashtag in request.POST.keys():
                     post.add_hashtag(hashtag)
