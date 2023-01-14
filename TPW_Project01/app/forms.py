@@ -1,6 +1,6 @@
 
 from django import forms
-from app.models import Hashtag, Profile
+from app.models import Hashtag, Profile, Categoria
 
 # *** This is the form for the user to register ***
 class FormSingup(forms.Form):
@@ -38,6 +38,13 @@ class FormSingup(forms.Form):
                 'placeholder': 'Bio',
                 'id': 'bio',
                 'name': 'bio',}))
+
+    categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=False, widget=forms.Select(
+        attrs={'class': 'select select-bordered select-primary w-full',
+                'placeholder': 'categoria',
+                'id': 'categoria',
+                'name': 'categoria',}))
+
 
 # *** This is the form for the user to login ***
 class FormLogin(forms.Form):

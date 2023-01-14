@@ -13,8 +13,8 @@ def home(request):
     if request.user.is_authenticated:
         ctx = {
             "friend":True,
-            "posts": Post.objects.all().order_by("-date"),
             "profile": get_object_or_404(Profile, user=request.user),
+            "posts": Post.objects.all().order_by("-date"),
             "form_search": SearchForm(),
             "hashtags": Hashtag.objects.all(),
             "exist": True
@@ -42,23 +42,26 @@ def signup(request):
             email = formSignup.cleaned_data["email"]
             password = formSignup.cleaned_data["password"]
             confirmation = formSignup.cleaned_data["confirmation"]
+            categoria = formSignup.cleaned_data["categoria"]
 
             if password == confirmation:
                 if User.objects.filter(username=username).exists():
                     return render(request, "signup.html", {"messages": "Username already exists." , "formSignup": formSignup})
                 elif User.objects.filter(email=email).exists():
                     return render(request, "signup.html", {"messages": "Email already exists.", "formSignup": formSignup})
+                elif categoria == None:
+                    return render(request, "signup.html", {"messages": "Seleciona Categoria", "formSignup": formSignup, "form_search": SearchForm()})
                 elif request.FILES:
                     photo = request.FILES["photo"]
                     user = User.objects.create_user(username=username, password=password, email=email)
-                    profile = Profile.objects.create(user=user, profile_pic=photo)
+                    profile = Profile.objects.create(user=user, profile_pic=photo,  categoria=categoria)
                     profile.save()
                     auth_login(request, User.objects.get(username=username))
                     return redirect("home")
                 else:
                     user = User.objects.create_user(username=username, password=password, email=email)
                     user.save()
-                    profile = Profile.objects.create(user=user)
+                    profile = Profile.objects.create(user=user, categoria=categoria)
                     profile.save()
                     auth_login(request, user)
                     return redirect("home")
