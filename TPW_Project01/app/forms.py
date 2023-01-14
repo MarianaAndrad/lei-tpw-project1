@@ -132,5 +132,3 @@ class SearchForm(forms.Form):
             "id": "search",
             "name": "search",
     }))
-
-class HashTagsForm(forms.Form):
