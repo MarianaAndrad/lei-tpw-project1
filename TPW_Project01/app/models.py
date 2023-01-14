@@ -49,6 +49,9 @@ class Post(models.Model):
         self.image.storage.delete(self.image.name)
         super().delete()
     
+    def get_hashtags(self):
+        return self.hashtags.all()
+
     def get_likes_count(self):
         return self.likes.count()
     
@@ -65,6 +68,10 @@ class Post(models.Model):
         self.like_count += 1
         super().save()
     
+    def add_hashtag(self,hashtag):
+        self.hashtags.add(hashtag)
+        super().save()
+
     def add_comment(self):
         self.comment_count += 1
         super().save()

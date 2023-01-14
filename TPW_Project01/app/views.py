@@ -16,6 +16,7 @@ def home(request):
             "posts": Post.objects.all().order_by("-date"),
             "profile": get_object_or_404(Profile, user=request.user),
             "form_search": SearchForm(),
+            "hashtags": Hashtag.objects.all(),
             "exist": True
         }
 
@@ -206,9 +207,12 @@ def postadd(request):
     if request.method == "POST" and request.FILES:
         caption = request.POST["caption"]
         photo = request.FILES["photo"]
-
         if caption and photo:
-            Post.objects.create(profile=profile, image=photo, caption=caption)
+            post = Post.objects.create(profile=profile, image=photo, caption=caption)
+            for hashtag in Hashtag.objects.all():
+                if hashtag.hashtag in request.POST.keys():
+                    post.add_hashtag(hashtag)
+
             return redirect("home")
     else:
         return redirect("home")

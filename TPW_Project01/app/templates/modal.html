@@ -14,14 +14,27 @@
 
             <div class=" form-control">
                 <label class="label">
+                    <span class="label-text font-bold">hashtags</span>
+                </label>
+                {% for hashtag in hashtags %}
+                <label class="cursor-pointer">
+                    <span class="text-lg">#{{ hashtag }} </span>
+                    <input type="checkbox" class="checkbox checkbox-primary" name="{{hashtag}}" id="{{hashtag}}"/>
+                </label>
+                {% endfor %}
+            </div>
+            <div class=" form-control">
+                <label class="label">
                     <span class="label-text font-bold">Image</span>
                 </label>
                 <input type="file" class="file-input file-input-bordered file-input-primary w-full" name="photo"
                        id="photo"/>
             </div>
+
             <div class="pt-4">
                 <button class="btn btn-active btn-primary btn-wide w-full" type="submit">Post</button>
             </div>
+
         </form>
     </label>
 </label>
