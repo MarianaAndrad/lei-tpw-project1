@@ -8,6 +8,9 @@
                         <img src={{ post.image.url }}/>
                         <div class="card-body">
                             <h2 class="card-title text-4xl">{{post.caption}}</h2>
+                            {% for hashtag in post.hashtags.all %}
+                                <small class="font" >#{{hashtag.hashtag}}</small>
+                            {% endfor %}
 
                             <div class="flex items-center justify-between">
                             <div class="flex flex-row items-center">
