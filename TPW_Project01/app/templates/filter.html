@@ -121,10 +121,10 @@
                         {#                                <small>likes: <span id="count_{{ post.id }}">{{ post.like_count }}</span></small>#}
 
                         <div class="card-actions justify-end">
-                            <label class="btn btn-circle btn-outline btn-primary w-24">
+                            <a class="btn btn-circle btn-outline btn-primary w-24" href="/post/{{ post.id }}">
                                 <i class="fa-solid fa-comment fa-lg"></i>
                                 <span class="pl-2">{{ post.comment_count }}</span>
-                            </label>
+                            </a>
                             <button class="btn btn-outline btn-error btn-like w-24" value="{{ post.id }}"
                                     id="btn_{{ post.id }}">
                                 {% if profile in post.likes.all %}
