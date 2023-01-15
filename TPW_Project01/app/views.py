@@ -8,7 +8,7 @@ from app.models import Profile, Post, Comment, Follow,Hashtag, Categoria
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
-from django.db.models import Sum
+from django.db.models import Sum, Q, Count
 
 
 def home(request):
@@ -351,7 +351,6 @@ def like(request):
         return JsonResponse({'result': result, 'type': type})
 
 def follow(request):
-    print("ola")
     if request.POST.get('action') == 'post':
         following = ''
         followers = ''
@@ -502,20 +501,22 @@ def search_filter(request):
         categoria = request.GET.get('categoria')
         if categoria == "0":
             categoria = None
-        print(categoria)
         posts = Post.objects.all()
+        query_objects = Q()
         if query:
-            posts = posts.filter(caption__contains=query) 
-        if likes:
-            posts = posts.filter(like_count__gte=likes)
-        if min_date:
-            posts = posts.filter(date__gte=min_date)
-        if max_date:
-            posts = posts.filter(date__lte=max_date)
-        if comments:
-            posts = posts.filter(comment_count__gte=comments)
+            query_objects |= Q(caption__contains=query)
         if categoria:
-            posts = posts.filter(categoria=categoria)
+            query_objects |= Q(categoria=categoria)
+        if likes:
+            query_objects &= Q(like_count__gte=likes)
+        if min_date:
+            query_objects &= Q(date__gte=min_date)
+        if max_date:
+            query_objects &= Q(date__lte=max_date)
+        if comments:
+            query_objects &= Q(comment_count__gte=comments)
+
+        posts = posts.filter(query_objects)
 
         list_hashtags=[]
         for hashtag in Hashtag.objects.all():
@@ -561,37 +562,133 @@ def hashtag_list(request, hashtag):
     return render(request, 'home.html', ctx)
 
 # **Graficos**
+
+def statistic(request): 
+    ctx={
+        "list_types":[
+            ("Total de posts por categoria", "postcategoria"),
+            ("Total de likes por Categoria", "likecategoria"),
+            ("Total de comments por Categoria","commentcategoria")
+            ],
+        "list_types_user":[
+            ("Total de likes por Categoria", "like"),
+            ("Total de comments por Categoria","comment")
+            ]
+        }
+
+    try:
+        user = Profile.objects.get(user__username=request.user.username)
+        ctx["profile"]=user
+
+    except ObjectDoesNotExist:
+        user = None
+
+    return render(request, "statistic.html", ctx)
+
+
+def graphics(request,type):
+    labels = []
+    data = []
+    print(type)
+
+    if type == "likecategoria":
+        # Total de Likes por Categoria
+        queryset = Post.objects.values('categoria__nome').annotate(likes_total=Sum('like_count'))
+        print(queryset)
+        for entry in queryset:
+            labels.append(entry['categoria__nome'])
+            data.append(entry['likes_total'])
+
+        # return JsonResponse(data={'labels': labels,'data': data,})
+        return render(request, 'graphics.html', {'labels': labels,'data': data,})
+
+    elif type == "commentcategoria":
+        # Total de Comentarios por Categoria
+        queryset = Post.objects.values('categoria__nome').annotate(comments_total=Sum('comment_count'))
+        for entry in queryset:
+            labels.append(entry['categoria__nome'])
+            data.append(entry['comments_total'])
+        
+        #return JsonResponse(data={'labels': labels,'data': data,})
+        return render(request, 'graphics.html', {'labels': labels,'data': data,})
+
+    elif type == "postcategoria":
+        # Total de Posts por Categoria
+        queryset = Post.objects.values('categoria__nome').annotate(posts_total=Count('categoria__nome'))
+        for entry in queryset:
+            labels.append(entry['categoria__nome'])
+            data.append(entry['posts_total'])
+        
+        #return JsonResponse(data={'labels': labels,'data': data,})
+        return render(request, 'graphics.html', {'labels': labels,'data': data,})
+
+    else: 
+        ctx = {
+            "profile": None
+        }
+    return render(request, '404.html',ctx)
+        
+@login_required(login_url="/login/")
+def graphics_user(request, type):
+    labels=[]
+    data=[]
+
+    if type == "like":
+        # Total de Likes por Categoria
+        queryset = Post.objects.filter(profile__user__username=request.user.username).values('categoria__nome').annotate(likes_total=Sum('like_count'))
+        for entry in queryset:
+            labels.append(entry['categoria__nome'])
+            data.append(entry['likes_total'])
+            # return JsonResponse(data={'labels': labels,'data': data,})
+            return render(request, 'graphics.html', {'labels': labels,'data': data,})
+    
+    elif type == "comment":
+        # Total de COmentarios por Categoria
+        queryset = Post.objects.filter(profile__user__username=request.user.username).values('categoria__nome').annotate(comments_total=Sum('comment_count'))
+        for entry in queryset:
+            labels.append(entry['categoria__nome'])
+            data.append(entry['comments_total'])
+            # return JsonResponse(data={'labels': labels,'data': data,})
+            return render(request, 'graphics.html', {'labels': labels,'data': data,})
+
+    elif type == "post":
+        # Total de Posts por Categoria
+        queryset = Post.objects.filter(profile__user__username=request.user.username).values('categoria__nome').annotate(posts_total=Count('categoria__nome'))
+        for entry in queryset:
+            labels.append(entry['categoria__nome'])
+            data.append(entry['posts_total'])
+            # return JsonResponse(data={'labels': labels,'data': data,})
+            return render(request, 'graphics.html', {'labels': labels,'data': data,})
+
+    else:
+        try:
+            user = Profile.objects.get(user__username=request.user.username)
+            ctx= {
+                "profile":user
+            }
+
+        except ObjectDoesNotExist:
+            user = None
+
+    return render(request, '404.html',ctx)
+
+# @login_required(login_url="/login/")
 # def graphics(request):
 #     labels=[]
 #     data=[]
 
-#     queryset = Post.objects.values('categoria__nome').annotate(likes_total=Sum('like_count'))
+
+#     queryset = Post.objects.values('hashtags__hashtag').annotate(post_total=Sum('like_count'))
+#     print(queryset)
 #     for entry in queryset:
-#         labels.append(entry['categoria__nome'])
-#         data.append(entry['likes_total'])
+#         labels.append(entry['hashtags__hashtag'])
+#         data.append(entry['post_total'])
 
 #     # return JsonResponse(data={'labels': labels,'data': data,})
-#     return render(request, 'estatisticas.html', {
+#     return render(request, 'graphics.html', {
 #         'labels': labels,
 #         'data': data,
 #     })
-
-def graphics(request):
-    labels=[]
-    data=[]
-
-    queryset = Post.objects.values('hashtags__hashtag').annotate(post_total=Sum(
-        'like_count'))
-    print(queryset)
-    for entry in queryset:
-        labels.append(entry['hashtags__hashtag'])
-        data.append(entry['post_total'])
-
-    # return JsonResponse(data={'labels': labels,'data': data,})
-    return render(request, 'estatisticas.html', {
-        'labels': labels,
-        'data': data,
-    })
 
 # *Funções auxiliares*
 

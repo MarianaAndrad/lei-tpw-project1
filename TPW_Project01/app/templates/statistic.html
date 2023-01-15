@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container mx-auto flex-row">
+    <samll>Da plataforma</samll>
+    {% for title,type in list_types %}
+        <p>
+            <a class="btn btn-outline btn-info" href="/graphics/{{type}}"> {{ title }}</a>
+        </p>
+    {% endfor %}
+
+    {% if profile %}
+    <h>Do utilizador</h>
+        {% for title,type in list_types_profile %}
+        <p>
+            <a class="btn btn-outline btn-info" href="/graphics/user/{{type}}"> {{ title }}</a>
+        </p>
+        {% endfor %}
+    {% endif %}
+
+</div>
+
+{% endblock %}
