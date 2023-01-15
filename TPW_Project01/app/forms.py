@@ -119,6 +119,13 @@ class PasswordForm(forms.Form):
             "id": "password_confirm",
             "name": "password_confirm",
     }))
+# *** This is the form for the user to edit a categoria profile ***
+class CategoriaForm(forms.Form):
+    categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=False, widget=forms.Select(
+    attrs={'class': 'select select-bordered select-primary w-full',
+            'placeholder': 'categoria',
+            'id': 'categoria',
+            'name': 'categoria',}))
 
 # *** This is the form for the user to edit a bio profile ***
 class BioForm(forms.Form):

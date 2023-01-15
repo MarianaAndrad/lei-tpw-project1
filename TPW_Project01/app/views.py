@@ -1,7 +1,7 @@
 from django.contrib.auth import login as auth_login
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
-from app.forms import FormSingup, FormLogin, CommentForm, ImageForm, PasswordForm, BioForm, EditPostForm, SearchForm
+from app.forms import FormSingup, FormLogin, CommentForm, ImageForm, PasswordForm, BioForm, EditPostForm, SearchForm, CategoriaForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from app.models import Profile, Post, Comment, Follow,Hashtag, Categoria
@@ -212,12 +212,23 @@ def editProfile(request, username):
                 utilizador.save()
                 sucesso = True
 
+    if request.method == "POST" and 'categoria' in request.POST:
+        formCategoria= CategoriaForm(request.POST)
+        if formCategoria.is_valid():
+            categoria = formCategoria.cleaned_data["categoria"]
+            if categoria:
+                utilizador.categoria = categoria
+                utilizador.save()
+                sucesso = True
+
     if not sucesso:
         ctx["formImage"] = ImageForm()
         ctx["formBio"] = BioForm()
         ctx["formPassword"] = PasswordForm()
+        ctx["formCategoria"] = CategoriaForm()
 
         return render(request, "profileedit.html", ctx)
+
 
     return redirect("/profile")
 
@@ -318,7 +329,6 @@ def postedit(request,_id):
             return render(request, "postedit.html", ctx)
     else:
         return redirect("postdetail", _id)
-
 
 def like(request):
     if request.POST.get('action') == 'post':
