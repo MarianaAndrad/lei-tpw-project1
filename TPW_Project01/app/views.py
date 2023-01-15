@@ -8,6 +8,8 @@ from app.models import Profile, Post, Comment, Follow,Hashtag, Categoria
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
+from django.db.models import Sum
+
 
 def home(request):
     if request.user.is_authenticated:
@@ -558,6 +560,38 @@ def hashtag_list(request, hashtag):
 
     return render(request, 'home.html', ctx)
 
+# **Graficos**
+# def graphics(request):
+#     labels=[]
+#     data=[]
+
+#     queryset = Post.objects.values('categoria__nome').annotate(likes_total=Sum('like_count'))
+#     for entry in queryset:
+#         labels.append(entry['categoria__nome'])
+#         data.append(entry['likes_total'])
+
+#     # return JsonResponse(data={'labels': labels,'data': data,})
+#     return render(request, 'estatisticas.html', {
+#         'labels': labels,
+#         'data': data,
+#     })
+
+def graphics(request):
+    labels=[]
+    data=[]
+
+    queryset = Post.objects.values('hashtags__hashtag').annotate(post_total=Sum(
+        'like_count'))
+    print(queryset)
+    for entry in queryset:
+        labels.append(entry['hashtags__hashtag'])
+        data.append(entry['post_total'])
+
+    # return JsonResponse(data={'labels': labels,'data': data,})
+    return render(request, 'estatisticas.html', {
+        'labels': labels,
+        'data': data,
+    })
 
 # *Funções auxiliares*
 

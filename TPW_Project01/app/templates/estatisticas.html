@@ -1,6 +1,3 @@
-python3 manage.py makemigrations app
-python3 manage.py migrate
-
 {% extends "layout.html" %}
 {% block content %}
 
@@ -17,7 +14,7 @@ python3 manage.py migrate
         datasets: [{
           data: {{ data|safe }},
           backgroundColor: [
-            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
+            'blue', 'red', 'green', 'yellow' //mudar correr
           ],
           label: 'Population'
         }],
