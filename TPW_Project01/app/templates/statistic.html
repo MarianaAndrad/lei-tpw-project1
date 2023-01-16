@@ -19,13 +19,23 @@
     <div style="width: 50%;">
         <canvas id="pie-chart-like"></canvas>
     </div>
+    <div style="width: 50%;">
+        <canvas id="bar-chart-like"></canvas>
+    </div>
 
     <div style="width: 50%;">
         <canvas id="pie-chart-comment"></canvas>
     </div>
 
     <div style="width: 50%;">
+        <canvas id="bar-chart-comment"></canvas>
+    </div>
+
+    <div style="width: 50%;">
         <canvas id="pie-chart-post"></canvas>
+    </div>
+    <div style="width: 50%;">
+        <canvas id="bar-chart-post"></canvas>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
@@ -51,33 +61,56 @@
             data: {{ datapost|safe }},
             labels: {{ labelspost|safe }},
             title: '{{titlepost}}'
+          },
+          {
+            type: 'bar',
+            id: 'bar-chart-comment',
+            data: {{ datacomment|safe }},
+            labels: {{ labelscomment|safe }},
+            title: '{{titlecomment}}'
+          },
+          {
+            type: 'bar',
+            id: 'bar-chart-post',
+            data: {{ datapost|safe }},
+            labels: {{ labelspost|safe }},
+            title: '{{titlepost}}'
+          },
+          {
+            type: 'bar',
+            id: 'bar-chart-like',
+            data: {{ datalike|safe }},
+            labels: {{ labelslike|safe }},
+            title: '{{titlelike}}'
           }
         ];
-      
+        
         window.onload = function() {
           configs.forEach(config => {
             var ctx = document.getElementById(config.id).getContext('2d');
             new Chart(ctx, {
               type: config.type,
               data: {
+                labels: config.labels,
                 datasets: [{
                   data: config.data,
-                  backgroundColor: ['blue', 'red', 'green', 'yellow']
-                }],
-                labels: config.labels
-              },
-              options: {
-                responsive: true,
-                title: {
-                  display: true,
-                  text: config.title
-                }
-              }
+                  backgroundColor: (config.type === 'pie') ? ['blue', 'red', 'green', 'yellow'] : 'rgba(255, 99, 132, 0.2)',
+                  borderColor: (config.type === 'pie') ?  ['blue', 'red', 'green', 'yellow'] : 'rgba(255, 99,, 132, 1)',
+                    borderWidth: (config.type === 'bar') ? 2 : null
+                    }]
+                    },
+                    options: {
+                        responsive: true,
+                        legend: (config.type === 'bar') ? { display: false } : { display: true },
+                        scales: (config.type === 'bar') ? { y: { beginAtZero: false } } : null,
+                        title: {
+                        display: true,
+                        text: config.title
+                        }
+                    }
+                });
             });
-          });
         };
-      </script>
-
-</div>
+</script>
 
 {% endblock %}
