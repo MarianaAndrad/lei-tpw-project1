@@ -30,76 +30,53 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
     <script>
-        var configlike = {
-        type: 'pie',
-        data: {
-            datasets: [{
+        var configs = [
+          {
+            type: 'pie',
+            id: 'pie-chart-like',
             data: {{ datalike|safe }},
-            backgroundColor: [
-                'blue', 'red', 'green', 'yellow' //mudar correr
-            ],
-            }],
-            labels: {{ labelslike|safe }}
-        },
-        options: {
-            responsive: true,
-            title: {
-            display: true,
-            text: '{{titlelike}}'
-            }
-        }
-        };
-
-        var configcomment = {
-        type: 'pie',
-        data: {
-            datasets: [{
+            labels: {{ labelslike|safe }},
+            title: '{{titlelike}}'
+          },
+          {
+            type: 'pie',
+            id: 'pie-chart-comment',
             data: {{ datacomment|safe }},
-            backgroundColor: [
-                'blue', 'red', 'green', 'yellow' //mudar correr
-            ],
-            }],
-            labels: {{ labelscomment|safe }}
-        },
-        options: {
-            responsive: true,
-            title: {
-            display: true,
-            text: '{{titlecomment}}'
-            }
-        }
-        };
-
-        var configpost = {
-        type: 'pie',
-        data: {
-            datasets: [{
+            labels: {{ labelscomment|safe }},
+            title: '{{titlecomment}}'
+          },
+          {
+            type: 'pie',
+            id: 'pie-chart-post',
             data: {{ datapost|safe }},
-            backgroundColor: [
-                'blue', 'red', 'green', 'yellow' //mudar correr
-            ],
-            }],
-            labels: {{ labelspost|safe }}
-        },
-        options: {
-            responsive: true,
-            title: {
-            display: true,
-            text: '{{titlepost}}'
-            }
-        }
-        };
-
+            labels: {{ labelspost|safe }},
+            title: '{{titlepost}}'
+          }
+        ];
+      
         window.onload = function() {
-        var ctx = document.getElementById('pie-chart-like').getContext('2d');
-        window.myPie = new Chart(ctx, configlike);
-        var ctx = document.getElementById('pie-chart-comment').getContext('2d');
-        window.myPie2 = new Chart(ctx, configcomment);
-        var ctx = document.getElementById('pie-chart-post').getContext('2d');
-        window.myPie3 = new Chart(ctx, configpost);
-
+          configs.forEach(config => {
+            var ctx = document.getElementById(config.id).getContext('2d');
+            new Chart(ctx, {
+              type: config.type,
+              data: {
+                datasets: [{
+                  data: config.data,
+                  backgroundColor: ['blue', 'red', 'green', 'yellow']
+                }],
+                labels: config.labels
+              },
+              options: {
+                responsive: true,
+                title: {
+                  display: true,
+                  text: config.title
+                }
+              }
+            });
+          });
         };
-    </script>
+      </script>
 
 </div>
 
