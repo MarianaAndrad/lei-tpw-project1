@@ -669,21 +669,3 @@ def ctx_static():
     }
     return ctx
 
-
-# **Testes**
-
-def test(request):
-    ctx = ctx_static()
-    try:
-        user = Profile.objects.get(user__username=request.user.username)
-        ctx["profile"]=user
-
-    except ObjectDoesNotExist:
-        user = None
-
-    ctx["title"] = f"Total de likes por Categoria"
-    queryset = Post.objects.values("categoria__nome").annotate(total=Sum('like_count'))
-    ctx["labels"] = [entry["categoria__nome"] for entry in queryset]
-    ctx["data"] = [entry['total'] for entry in queryset]
-
-    return render(request, 'test.html',ctx)

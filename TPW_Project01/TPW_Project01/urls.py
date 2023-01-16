@@ -48,12 +48,9 @@ urlpatterns = [
     path("search_filter/", views.search_filter, name= "search_filter"),
     path("hashtag/<str:hashtag>/",views.hashtag_list, name="hashtag_list"),
     
-    #path("graphics",views.graphics,name="graphics"),
     path("statistic/", views.statistic, name="statistic"),
     path("graphics/<str:type>",views.graphics,name="graphics"),
     path("graphicsuser/<str:type>",views.graphics_user,name="graphics_user"),
-    path('test/', views.test, name="test"),
-
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
