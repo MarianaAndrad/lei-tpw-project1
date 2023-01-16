@@ -2,21 +2,104 @@
 {% block content %}
 
 <div class="container mx-auto flex-row">
-    <samll>Da plataforma</samll>
+    <samll>Da plataforma</samll> </br>
     {% for title,type in list_types %}
-        <p>
             <a class="btn btn-outline btn-info" href="/graphics/{{type}}"> {{ title }}</a>
-        </p>
     {% endfor %}
+    </br>
 
     {% if profile %}
-    <h>Do utilizador</h>
-        {% for title,type in list_types_profile %}
-        <p>
-            <a class="btn btn-outline btn-info" href="/graphics/user/{{type}}"> {{ title }}</a>
-        </p>
+    <h>Do utilizador</h> </br>
+        {% for title,type in list_types %}
+            <a class="btn btn-outline btn-info" href="/graphicsuser/{{type}}"> {{ title }}</a>
         {% endfor %}
     {% endif %}
+    </br>
+
+    <div style="width: 50%;">
+        <canvas id="pie-chart-like"></canvas>
+    </div>
+
+    <div style="width: 50%;">
+        <canvas id="pie-chart-comment"></canvas>
+    </div>
+
+    <div style="width: 50%;">
+        <canvas id="pie-chart-post"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script>
+        var configlike = {
+        type: 'pie',
+        data: {
+            datasets: [{
+            data: {{ datalike|safe }},
+            backgroundColor: [
+                'blue', 'red', 'green', 'yellow' //mudar correr
+            ],
+            }],
+            labels: {{ labelslike|safe }}
+        },
+        options: {
+            responsive: true,
+            title: {
+            display: true,
+            text: '{{titlelike}}'
+            }
+        }
+        };
+
+        var configcomment = {
+        type: 'pie',
+        data: {
+            datasets: [{
+            data: {{ datacomment|safe }},
+            backgroundColor: [
+                'blue', 'red', 'green', 'yellow' //mudar correr
+            ],
+            }],
+            labels: {{ labelscomment|safe }}
+        },
+        options: {
+            responsive: true,
+            title: {
+            display: true,
+            text: '{{titlecomment}}'
+            }
+        }
+        };
+
+        var configpost = {
+        type: 'pie',
+        data: {
+            datasets: [{
+            data: {{ datapost|safe }},
+            backgroundColor: [
+                'blue', 'red', 'green', 'yellow' //mudar correr
+            ],
+            }],
+            labels: {{ labelspost|safe }}
+        },
+        options: {
+            responsive: true,
+            title: {
+            display: true,
+            text: '{{titlepost}}'
+            }
+        }
+        };
+
+        window.onload = function() {
+        var ctx = document.getElementById('pie-chart-like').getContext('2d');
+        window.myPie = new Chart(ctx, configlike);
+        var ctx = document.getElementById('pie-chart-comment').getContext('2d');
+        window.myPie2 = new Chart(ctx, configcomment);
+        var ctx = document.getElementById('pie-chart-post').getContext('2d');
+        window.myPie3 = new Chart(ctx, configpost);
+
+        };
+    </script>
 
 </div>
 

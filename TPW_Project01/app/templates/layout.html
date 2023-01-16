@@ -40,7 +40,15 @@
                     <a class="justify-between" href="/profile/{{ profile.user.username }}/edit">
                         Settings
                     </a>
+                </li>
+
+                <li>
+                    <a href={% url 'statistic' %}>
+                        Statistic
+                    </a>
+                </li>
                 <li><a href={% url 'logout' %}>Logout</a></li>
+
             </ul>
         </div>
     {% else %}

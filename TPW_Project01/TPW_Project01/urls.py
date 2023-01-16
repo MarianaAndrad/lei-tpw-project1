@@ -20,7 +20,6 @@ from app import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", views.home, name="home"),
@@ -52,7 +51,8 @@ urlpatterns = [
     #path("graphics",views.graphics,name="graphics"),
     path("statistic/", views.statistic, name="statistic"),
     path("graphics/<str:type>",views.graphics,name="graphics"),
-    #path("graphics/user/<str:type>",views.graphics_user,name="graphics_user")
+    path("graphicsuser/<str:type>",views.graphics_user,name="graphics_user"),
+    path('test/', views.test, name="test"),
 
 
 
