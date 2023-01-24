@@ -33,11 +33,12 @@ def home(request):
         return render(request, "home.html", ctx)
 
 def home_categoria(request, _id):
+    categoria = get_object_or_404(Categoria, id = _id)
     if request.user.is_authenticated:
         ctx = {
             "friend":True,
             "profile": get_object_or_404(Profile, user=request.user),
-            "posts": Post.objects.all().order_by("-date").filter(categoria=_id),
+            "posts": Post.objects.all().order_by("-date").filter(categoria=categoria),
             "hashtags": Hashtag.objects.all(),
             "categorias": Categoria.objects.all(),
             "exist": True
@@ -47,7 +48,7 @@ def home_categoria(request, _id):
     else:
         ctx={
             "friend": False,
-            "posts": Post.objects.all().order_by("-date").filter(categoria=_id),
+            "posts": Post.objects.all().order_by("-date").filter(categoria=categoria),
             "categorias": Categoria.objects.all(),
             "exist": False
         }
