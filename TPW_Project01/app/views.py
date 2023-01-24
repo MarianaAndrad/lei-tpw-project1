@@ -238,8 +238,7 @@ def editProfile(request, username):
 # * Post*
 @login_required(login_url='/login/')
 def postadd(request):
-    user = get_object_or_404(User, username=request.user.username)
-    profile = get_object_or_404(Profile, user = user)
+    profile = get_object_or_404(Profile, user = request.user)
     if request.method == "POST" and request.FILES:
         caption = request.POST["caption"]
         photo = request.FILES["photo"]
@@ -257,12 +256,12 @@ def postdetail(request, _id):
     post = get_object_or_404(Post, id=_id)
     ctx = {
         "post": post,
-        "comments": Comment.objects.filter(post=_id),
+        "comments": Comment.objects.filter(post =_id),
         "hashtags": Hashtag.objects.all(),
         "exist_like" : False,
     }
-    post=get_object_or_404(Post, id=_id)
-    if request.user.is_authenticated and request.user.username!="admin":
+    post=get_object_or_404(Post, id =_id)
+    if request.user.is_authenticated:
         profile = get_object_or_404(Profile, user = request.user)
         ctx["profile"]= profile
         if request.method == "POST":
@@ -332,14 +331,15 @@ def postedit(request,_id):
     else:
         return redirect("postdetail", _id)
 
+@login_required(login_url='/login/')
 def like(request):
     if request.POST.get('action') == 'post':
         type = ''
         result = ''
         post_id = request.POST.get('post_id')
         user_id = request.POST.get('user_id')
-        user = get_object_or_404(Profile, id=user_id)
-        post = get_object_or_404(Post, id=post_id)
+        user = get_object_or_404(Profile, id = user_id)
+        post = get_object_or_404(Post, id = post_id)
         if post.likes.filter(id=user_id).exists():
             post.remove_like(user)
             type = 'unlike'
@@ -350,6 +350,7 @@ def like(request):
             result = post.like_count
         return JsonResponse({'result': result, 'type': type})
 
+@login_required(login_url='/login/')
 def follow(request):
     if request.POST.get('action') == 'post':
         following = ''
@@ -421,16 +422,14 @@ def searchuser(request):
             ctx["result"]=result
             return render(request, "searchresult.html", ctx)
     else:
-        try:
-            user = get_object_or_404(Profile, user = request.user)
-            ctx["profile"] = user
-        except ObjectDoesNotExist:
-            user = None
-
-        if user is None:
-            users = Profile.objects.all()
-        else:
-            users = Profile.objects.exclude(user__username__icontains=request.user.username)
+        users = Profile.objects.all()
+        if request.user.is_authenticated:
+            try:
+                user = get_object_or_404(Profile, user = request.user)
+                ctx["profile"] = user
+                users = Profile.objects.exclude(user__username__icontains=request.user.username)
+            except ObjectDoesNotExist:
+                user = None
 
         result = []
         for result_user in users:
@@ -477,7 +476,7 @@ def listFollower(request,username):
 @login_required(login_url="/login/")
 def listFollowing(request,username):
     user = get_object_or_404(Profile, user__username=username)
-    followings = Follow.objects.filter(profile=user)
+    followings = Follow.objects.filter(profile = user)
     result = []
     for result_user in followings:
         following = Follow.objects.filter(profile=result_user.following).count()
