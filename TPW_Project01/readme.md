@@ -1,38 +1,51 @@
+```bash
 python3 manage.py makemigrations app
+```
+```bash
 python3 manage.py migrate
+```
 
+```html
 {% extends "layout.html" %}
 {% block content %}
 
 <div id="container" style="width: 75%;">
     <canvas id="pie-chart"></canvas>
-  </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-  <script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script>
 
     var config = {
-      type: 'pie',
-      data: {
-        datasets: [{
-          data: {{ data|safe }},
-          backgroundColor: [
-            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
-          ],
-          label: 'Population'
-        }],
-        labels: {{ labels|safe }}
-      },
-      options: {
+                type: 'pie',
+                data: {
+                    datasets: [{
+                        data: {{data | safe
+                }
+            },
+            backgroundColor: [
+                '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
+            ],
+            label: 'Population'
+    }],
+    labels: {
+        {
+            labels | safe
+        }
+    }
+    },
+    options: {
         responsive: true
-      }
+    }
+    }
+    ;
+
+    window.onload = function () {
+        const ctx = document.getElementById('pie-chart').getContext('2d');
+        window.myPie = new Chart(ctx, config);
     };
 
-    window.onload = function() {
-      var ctx = document.getElementById('pie-chart').getContext('2d');
-      window.myPie = new Chart(ctx, config);
-    };
-
-  </script>
+</script>
 
 {% endblock %}
+```
