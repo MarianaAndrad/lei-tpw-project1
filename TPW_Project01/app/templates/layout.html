@@ -6,15 +6,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Goatbook - Home of the best 🐐</title>
+    <title>Farmbook - Home of the best animals' picture</title>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@2.38.1/dist/full.css" rel="stylesheet" type="text/css"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/97a6e4f33c.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- JQueryUI -->
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 
 <body class="flex flex-col min-h-screen">
@@ -54,14 +50,13 @@
     {% else %}
         {% if request.path != "/login/" and request.path != "/signup/" %}
             <div class="flex-none">
+                <a href="{% url 'statistic' %}" class="btn btn-ghost normal-case text-3xl">
+                    <i class="fa-duotone fa-chart-simple"></i>
+                </a>
                 <a href="{% url 'login' %}" class="btn btn-ghost normal-case text-3xl">
                     Login
                 </a>
-            </div>
-            <div class="flex-none">
-                <a href="{% url 'statistic' %}" class="btn btn-ghost normal-case text-3xl">
-                    Statistic
-                </a>
+
             </div>
         {% endif %}
     {% endif %}
