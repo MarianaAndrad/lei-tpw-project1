@@ -224,7 +224,7 @@ def editProfile(request, username):
                     sucesso = False
 
     if request.method == "POST" and 'bio' in request.POST:
-        formBio = BioForm(request.POST)
+        formBio = BioForm(request.POST, initial= {"bio": utilizador.bio})
         if formBio.is_valid():
             bio = formBio.cleaned_data["bio"]
             if bio:
@@ -242,11 +242,14 @@ def editProfile(request, username):
                 sucesso = True
 
     if not sucesso:
+        formbio = BioForm()
+        formbio.fields["bio"].widget.attrs['placeholder'] = utilizador.bio
+        formcategory = CategoryForm()
+        formcategory.fields["category"].initial = utilizador.category.id
         ctx["formImage"] = ImageForm()
-        ctx["formBio"] = BioForm()
+        ctx["formBio"] = formbio
         ctx["formPassword"] = PasswordForm()
-        ctx["formcategory"] = CategoryForm()
-
+        ctx["formcategory"] = formcategory
         return render(request, "profileedit.html", ctx)
 
     return redirect("/profile")

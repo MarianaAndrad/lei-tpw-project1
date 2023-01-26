@@ -38,7 +38,9 @@ class FormSingup(forms.Form):
         attrs={'class': 'textarea h-24 textarea-bordered textarea-primary w-full',
                'placeholder': 'Bio',
                'id': 'bio',
-               'name': 'bio', }))
+               'name': 'bio',
+               }))
+        
 
     category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, widget=forms.Select(
         attrs={'class': 'select select-bordered select-primary w-full',
@@ -144,6 +146,8 @@ class BioForm(forms.Form):
             "id": "bio",
             "name": "bio",
         }))
+
+
 
 
 # *** This is the form for the user to search by a username ***
