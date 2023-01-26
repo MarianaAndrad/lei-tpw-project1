@@ -16,8 +16,12 @@
 <body class="flex flex-col min-h-screen">
 <!--NAVBAR-->
 <div class="navbar bg-base-100 drop-shadow-md mb-2">
-    <a href="/" class="btn btn-ghost normal-case text-3xl">🐐 Book</a>
+    <a href="/" class="btn btn-ghost normal-case text-3xl">Farm Book</a>
     <div class="flex-1"></div>
+    <div class="container flex justify-center gap-2">
+        <a class="btn btn-primary" href='{% url "search_filter" %}'><i class="fas fa-paw fa-2xl"></i><span class="pl-2">Search Posts</span></a>
+        <a class="btn btn-primary" href='{% url "search" %}'><i class="fas fa-user fa-2xl"></i><span class="pl-2">Search Users</span></a>
+    </div>
     {% if profile.user.username %}
         <label for="my-modal-4" class="btn btn-primary"><i class="fa-solid fa-plus fa-2xl"></i>
             <span class="pl-2">Post</span>
@@ -28,20 +32,14 @@
             </label>
             <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
                 <li>
-                    <a href={% url 'profile' %}>
-                        Profile
-                    </a>
+                    <a href={% url 'profile' %}>Profile</a>
                 </li>
                 <li>
-                    <a class="justify-between" href="/profile/{{ profile.user.username }}/edit">
-                        Settings
-                    </a>
+                    <a class="justify-between" href="/profile/{{ profile.user.username }}/edit">Settings</a>
                 </li>
 
                 <li>
-                    <a href={% url 'statistic' %}>
-                        Statistic
-                    </a>
+                    <a href={% url 'statistic' %}>Statistic</a>
                 </li>
                 <li><a href={% url 'logout' %}>Logout</a></li>
 

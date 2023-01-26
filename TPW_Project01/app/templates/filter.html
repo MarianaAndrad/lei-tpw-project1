@@ -5,13 +5,13 @@
         <!-- <div class="my-auto">
             <div class="form-control">
                 <label class="label cursor-pointer" id="hot" name="hot">
-                  <span class="label-text">Hot</span> 
+                  <span class="label-text">Hot</span>
                   <input type="radio" name="radio" class="radio radio-info" checked id="radio" />
                 </label>
               </div>
               <div class="form-control">
                 <label class="label cursor-pointer" name="fresh" id="fresh">
-                  <span class="label-text">Fresh</span> 
+                  <span class="label-text">Fresh</span>
                   <input type="radio" name="radio" class="radio radio-info" id ="radio" />
                 </label>
             </div>
@@ -41,7 +41,7 @@
             <span class="label-text">Reino Animal</span>
 
             <select class="select select-primary " id="categoria" name ="categoria">
-                <option disabled selected value=0>Reino Animal</option>
+                <option disabled selected value=0>Animal Type</option>
                 {% for categoria in categorias %}
                     {%  if request.GET.categoria != categoria %}
                         <option value="{{ categoria.id }}">{{ categoria }}</option>
@@ -52,25 +52,31 @@
             </select>
         </label>
 
-        <div>
-            {% if request.GET.likes is None %}
-                <input type="range" min="0" max="4" value="0" class="range" step="1" id="likes" name="likes"/>
-            {% else %}
-                <input type="range" min="0" max="4" value="{{ request.GET.likes }}" class="range" step="1" id="likes" name="likes"/>
-            {% endif %}
-            <div class="w-full flex justify-between text-xs px-2">
-                <span>0</span>
-                <span>1</span>
-                <span>2</span>
-                <span>3</span>
-                <span>4+</span>
+        <label class="label gap-2">
+            <span class="label-text">Total Likes</span>
+            <div>
+                {% if request.GET.likes is None %}
+                    <input type="range" min="0" max="4" value="0" class="range range-primary" step="1" id="likes" name="likes"/>
+                {% else %}
+                    <input type="range" min="0" max="4" value="{{ request.GET.likes }}" class="range range-primary" step="1" id="likes" name="likes"/>
+                {% endif %}
+                <div class="w-full flex justify-between text-xs px-2">
+                    <span>0</span>
+                    <span>1</span>
+                    <span>2</span>
+                    <span>3</span>
+                    <span>4+</span>
+                </div>
             </div>
-        </div>
+        </label>
+
+        <label class="label gap-2">
+            <span class="label-text">Total Comments</span>
         <div>
             {% if request.GET.comments is None %}
-                <input type="range" min="0" max="4" value="0" class="range" step="1" id="comments" name="comments"/>
+                <input type="range" min="0" max="4" value="0" class="range range-primary" step="1" id="comments" name="comments"/>
             {% else %}
-                <input type="range" min="0" max="4" value="{{ request.GET.comments }}" class="range" step="1" id="comments" name="comments"/>
+                <input type="range" min="0" max="4" value="{{ request.GET.comments }}" class="range range-primary" step="1" id="comments" name="comments"/>
             {% endif %}
             <div class="w-full flex justify-between text-xs px-2">
                 <span>0</span>
@@ -80,6 +86,7 @@
                 <span>4+</span>
             </div>
         </div>
+        </label>
 
     </div>
     <label>
@@ -99,7 +106,7 @@
         </label>
         {% endfor %}
 
-    </div> 
+    </div>
     <div class="lg:p-12 max-w-md max-w-xl lg:my-0 my-12 mx-auto p-6">
         <button class="btn btn-block btn-primary btn-wide">Search</button>
     </div>

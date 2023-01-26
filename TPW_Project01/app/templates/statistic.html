@@ -1,116 +1,122 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="container mx-auto flex-row">
-    <samll>Da plataforma</samll> </br>
-    {% for title,type in list_types %}
-            <a class="btn btn-outline btn-info" href="/graphics/{{type}}"> {{ title }}</a>
-    {% endfor %}
-    </br>
+    <div class="container mx-auto flex-row space-x-between">
+        <div class="flex justify-between">
+            <div>
+                <small>Da plataforma</small>
+                {% for title,type in list_types %}
+                    <a class="btn btn-outline btn-primary" href="/graphics/{{ type }}"> {{ title }}</a>
+                {% endfor %}
+            </div>
+            <div>
+                {% if profile %}
+                    <h>Do utilizador</h>
+                    {% for title,type in list_types %}
+                        <a class="btn btn-outline btn-primary" href="/graphicsuser/{{ type }}"> {{ title }}</a>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
 
-    {% if profile %}
-    <h>Do utilizador</h> </br>
-        {% for title,type in list_types %}
-            <a class="btn btn-outline btn-info" href="/graphicsuser/{{type}}"> {{ title }}</a>
-        {% endfor %}
-    {% endif %}
-    </br>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <canvas id="pie-chart-like"></canvas>
+            </div>
+            <div>
+                <canvas id="bar-chart-like"></canvas>
+            </div>
 
-    <div style="width: 50%;">
-        <canvas id="pie-chart-like"></canvas>
-    </div>
-    <div style="width: 50%;">
-        <canvas id="bar-chart-like"></canvas>
-    </div>
+            <div>
+                <canvas id="pie-chart-comment"></canvas>
+            </div>
 
-    <div style="width: 50%;">
-        <canvas id="pie-chart-comment"></canvas>
-    </div>
+            <div>
+                <canvas id="bar-chart-comment"></canvas>
+            </div>
 
-    <div style="width: 50%;">
-        <canvas id="bar-chart-comment"></canvas>
-    </div>
-
-    <div style="width: 50%;">
-        <canvas id="pie-chart-post"></canvas>
-    </div>
-    <div style="width: 50%;">
-        <canvas id="bar-chart-post"></canvas>
+            <div>
+                <canvas id="pie-chart-post"></canvas>
+            </div>
+            <div>
+                <canvas id="bar-chart-post"></canvas>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
     <script>
         var configs = [
-          {
-            type: 'pie',
-            id: 'pie-chart-like',
-            data: {{ datalike|safe }},
-            labels: {{ labelslike|safe }},
-            title: '{{titlelike}}'
-          },
-          {
-            type: 'pie',
-            id: 'pie-chart-comment',
-            data: {{ datacomment|safe }},
-            labels: {{ labelscomment|safe }},
-            title: '{{titlecomment}}'
-          },
-          {
-            type: 'pie',
-            id: 'pie-chart-post',
-            data: {{ datapost|safe }},
-            labels: {{ labelspost|safe }},
-            title: '{{titlepost}}'
-          },
-          {
-            type: 'bar',
-            id: 'bar-chart-comment',
-            data: {{ datacomment|safe }},
-            labels: {{ labelscomment|safe }},
-            title: '{{titlecomment}}'
-          },
-          {
-            type: 'bar',
-            id: 'bar-chart-post',
-            data: {{ datapost|safe }},
-            labels: {{ labelspost|safe }},
-            title: '{{titlepost}}'
-          },
-          {
-            type: 'bar',
-            id: 'bar-chart-like',
-            data: {{ datalike|safe }},
-            labels: {{ labelslike|safe }},
-            title: '{{titlelike}}'
-          }
+            {
+                type: 'pie',
+                id: 'pie-chart-like',
+                data: {{ datalike|safe }},
+                labels: {{ labelslike|safe }},
+                title: '{{titlelike}}'
+            },
+            {
+                type: 'pie',
+                id: 'pie-chart-comment',
+                data: {{ datacomment|safe }},
+                labels: {{ labelscomment|safe }},
+                title: '{{titlecomment}}'
+            },
+            {
+                type: 'pie',
+                id: 'pie-chart-post',
+                data: {{ datapost|safe }},
+                labels: {{ labelspost|safe }},
+                title: '{{titlepost}}'
+            },
+            {
+                type: 'bar',
+                id: 'bar-chart-comment',
+                data: {{ datacomment|safe }},
+                labels: {{ labelscomment|safe }},
+                title: '{{titlecomment}}'
+            },
+            {
+                type: 'bar',
+                id: 'bar-chart-post',
+                data: {{ datapost|safe }},
+                labels: {{ labelspost|safe }},
+                title: '{{titlepost}}'
+            },
+            {
+                type: 'bar',
+                id: 'bar-chart-like',
+                data: {{ datalike|safe }},
+                labels: {{ labelslike|safe }},
+                title: '{{titlelike}}'
+            }
         ];
-        
-        window.onload = function() {
-          configs.forEach(config => {
-            var ctx = document.getElementById(config.id).getContext('2d');
-            new Chart(ctx, {
-              type: config.type,
-              data: {
-                labels: config.labels,
-                datasets: [{
-                  data: config.data,
-                  backgroundColor: (config.type === 'pie') ? ['blue', 'red', 'green', 'yellow'] : 'rgba(255, 99, 132, 0.2)',
-                  borderColor: (config.type === 'pie') ?  ['blue', 'red', 'green', 'yellow'] : 'rgba(255, 99,, 132, 1)',
-                    borderWidth: (config.type === 'bar') ? 2 : null
-                    }]
+
+        window.onload = function () {
+            configs.forEach(config => {
+                var ctx = document.getElementById(config.id).getContext('2d');
+                new Chart(ctx, {
+                    type: config.type,
+                    data: {
+                        labels: config.labels,
+                        datasets: [{
+                            data: config.data,
+                            backgroundColor: (config.type === 'pie') ? ['#65c3c8', '#ef9fbc', '#eeaf3a', '#382800'] : 'rgba(255, 99, 132, 0.2)',
+                            borderColor: (config.type === 'pie') ? ['#65c3c8', '#ef9fbc', '#eeaf3a', '#382800'] : 'rgba(255, 99, 132, 1)',
+                            borderWidth: (config.type === 'bar') ? 2 : null
+                        }]
                     },
                     options: {
                         responsive: true,
-                        legend: (config.type === 'bar') ? { display: false } : { display: true },
-                        scales: (config.type === 'bar') ? { y: { beginAtZero: false } } : null,
+                        legend: (config.type === 'bar') ? {display: false} : {display: true},
+                        scales: (config.type === 'bar') ? {y: {beginAtZero: false}} : null,
                         title: {
-                        display: true,
-                        text: config.title
+                            display: true,
+                            text: config.title
                         }
                     }
                 });
             });
         };
-</script>
+    </script>
 
 {% endblock %}

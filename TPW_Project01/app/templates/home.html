@@ -1,11 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class="container mx-auto flex-row">
+
+    <div class="container flex justify-center gap-2 pb-2">
+        <a class="btn btn-outline btn-primary {% if categoria_id == 0 %}btn-active{% endif %}"
+           href="/">All</a>
         {% for categoria in categorias %}
-            <a class="btn btn-outline btn-info" href="/{{categoria.id}}/" >{{ categoria }}</a>
+            <a class="btn btn-outline btn-primary {% if categoria.id == categoria_id %}btn-active{% endif %}"
+               href="/{{ categoria.id }}/">{{ categoria }}</a>
         {% endfor %}
-        <a class="btn btn-outline btn-info" href='{% url "search_filter" %}' >Pesquisa de Posts</a>
-        <a class="btn btn-outline btn-info" href='{% url "search" %}' >Pesquisa de Users</a>
     </div>
     <div class="container lg:flex justify-center lg:space-x-10 lg:space-y-0 space-y-5">
         <div class="space-y-5 flex-shrink-0 lg:w-7/12">
@@ -15,16 +17,17 @@
                         <a href="/post/{{ post.id }}">
                             <img src={{ post.image.url }}/>
                             <div class="card-body">
-                                <h2 class="card-title text-4xl">{{post.caption}}</h2>
+                                <h2 class="card-title text-4xl">{{ post.caption }}</h2>
                                 {% for hashtag in post.hashtags.all %}
-                                    <a class="font" href="/hashtag/{{hashtag}}">#{{hashtag.hashtag}}</a>
+                                    <a class="font" href="/hashtag/{{ hashtag }}">#{{ hashtag.hashtag }}</a>
                                 {% endfor %}
 
                                 <div class="flex items-center justify-between">
-                                <div class="flex flex-row items-center">
-                                    <a class="font-bold pr-2" href="/profile/{{ post.profile.user.username }}" >{{post.profile.user.username}}</a>
-                                    <small class="font-light"> {{ post.date|timesince }}</small>
-                                </div>
+                                    <div class="flex flex-row items-center">
+                                        <a class="font-bold pr-2"
+                                           href="/profile/{{ post.profile.user.username }}">{{ post.profile.user.username }}</a>
+                                        <small class="font-light"> {{ post.date|timesince }}</small>
+                                    </div>
                                     <div class="card-actions justify-end">
                                         {% if exist %}
                                             <a href="/post/{{ post.id }}">
@@ -42,20 +45,22 @@
                                             </a>
                                         {% endif %}
                                         {% if exist %}
-                                            <button class="btn btn-outline btn-error btn-like w-24" value="{{ post.id }}"
+                                            <button class="btn btn-outline btn-error btn-like w-24"
+                                                    value="{{ post.id }}"
                                                     id="btn_{{ post.id }}">
-                                                    {% if profile in post.likes.all %}
-                                                        <i class="fa-solid fa-heart fa-lg"></i>
-                                                    {% else %}
-                                                        <i class="fa-regular fa-heart fa-lg"></i>
-                                                    {% endif %}
+                                                {% if profile in post.likes.all %}
+                                                    <i class="fa-solid fa-heart fa-lg"></i>
+                                                {% else %}
+                                                    <i class="fa-regular fa-heart fa-lg"></i>
+                                                {% endif %}
                                                 <span id="count_{{ post.id }}" class="pl-2">{{ post.like_count }}</span>
                                             </button>
                                         {% else %}
                                             <a href="/login">
                                                 <label class="btn btn-outline btn-error w-24">
-                                                        <i class="fa-regular fa-heart fa-lg"></i>
-                                                    <span id="count_{{ post.id }}" class="pl-2">{{ post.like_count }}</span>
+                                                    <i class="fa-regular fa-heart fa-lg"></i>
+                                                    <span id="count_{{ post.id }}"
+                                                          class="pl-2">{{ post.like_count }}</span>
                                                 </label>
                                             </a>
                                         {% endif %}
