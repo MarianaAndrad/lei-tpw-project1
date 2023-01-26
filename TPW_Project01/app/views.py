@@ -17,8 +17,7 @@ def home(request):
         ctx = {
             "friend": True,
             "profile": get_object_or_404(Profile, user=request.user),
-            "posts": Post.objects.all().order_by("-date").filter(
-                category=get_object_or_404(Profile, user=request.user).category),
+            "posts": Post.objects.all().order_by("-date"),
             "hashtags": Hashtag.objects.all(),
             "categories": Category.objects.all(),
             "category_id": 0,
@@ -61,7 +60,6 @@ def home_category(request, _id):
         }
         return render(request, "home.html", ctx)
 
-
 # *User
 def signup(request):
     if request.method == "POST":
@@ -90,14 +88,16 @@ def signup(request):
                     profile = Profile.objects.create(user=user, profile_pic=photo, category=category)
                     profile.save()
                     auth_login(request, User.objects.get(username=username))
-                    return redirect("home")
+                    category_id = profile_category(user)
+                    return redirect("home_category", category_id)
                 else:
                     user = User.objects.create_user(username=username, password=password, email=email)
                     user.save()
                     profile = Profile.objects.create(user=user, category=category)
                     profile.save()
                     auth_login(request, user)
-                    return redirect("home")
+                    category_id = profile_category(user)
+                    return redirect("home_category", category_id)
 
             else:
                 return render(request, "signup.html", {"messages": "Passwords do not match.", "formSignup": formSignup})
@@ -110,7 +110,8 @@ def signup(request):
 
 def login(request):
     if request.user.is_authenticated:
-        return redirect("home")
+        category_id = profile_category(request.user)
+        return redirect("home_category", category_id)
     else:
         if request.method == "POST":
             formLogin = FormLogin(request.POST)
@@ -120,7 +121,8 @@ def login(request):
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
                     auth_login(request, user)
-                    return redirect("home")
+                    category_id = profile_category(user)
+                    return redirect("home_category", category_id)
                 else:
                     return render(request, "login.html", {"messages": "Invalid credentials.", "formLogin": formLogin, })
             else:
@@ -263,9 +265,11 @@ def postadd(request):
                 if hashtag.hashtag in request.POST.keys():
                     post.add_hashtag(hashtag)
 
-            return redirect("home")
+            category_id = profile_category(request.user)
+            return redirect("home_category", category_id)
     else:
-        return redirect("home")
+        category_id = profile_category(request.user)
+        return redirect("home_category", category_id)
 
 
 def postdetail(request, _id):
@@ -301,7 +305,8 @@ def postdelete(request, _id):
     post = get_object_or_404(Post, id=_id)
     if request.user.username == post.profile.user.username:
         post.delete()
-        return redirect("home")
+        category_id = profile_category(request.user)
+        return redirect("home_category", category_id)
     else:
         return redirect("postdetail", _id)
 
@@ -699,3 +704,8 @@ def ctx_static():
         ],
     }
     return ctx
+
+def profile_category(_user):
+    profile = get_object_or_404(Profile,user=_user)
+    category = get_object_or_404(Category, nome=profile.category)
+    return category.id
