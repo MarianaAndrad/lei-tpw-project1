@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Profile, Follow, Hashtag, Post, Comment, Categoria
+from .models import Profile, Follow, Hashtag, Post, Comment, Category
 
 
 
@@ -9,5 +9,5 @@ admin.site.register(Follow)
 admin.site.register(Hashtag)
 admin.site.register(Post)
 admin.site.register(Comment)
-admin.site.register(Categoria)
+admin.site.register(Category)
 

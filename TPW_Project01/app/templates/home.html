@@ -2,11 +2,11 @@
 {% block content %}
 
     <div class="container flex justify-center gap-2 pb-2">
-        <a class="btn btn-outline btn-primary {% if categoria_id == 0 %}btn-active{% endif %}"
+        <a class="btn btn-outline btn-primary {% if category_id == 0 %}btn-active{% endif %}"
            href="/">All</a>
-        {% for categoria in categorias %}
-            <a class="btn btn-outline btn-primary {% if categoria.id == categoria_id %}btn-active{% endif %}"
-               href="/{{ categoria.id }}/">{{ categoria }}</a>
+        {% for category in categories %}
+            <a class="btn btn-outline btn-primary {% if category.id == category_id %}btn-active{% endif %}"
+               href="/{{ category.id }}/">{{ category }}</a>
         {% endfor %}
     </div>
     <div class="container lg:flex justify-center lg:space-x-10 lg:space-y-0 space-y-5">
@@ -18,10 +18,12 @@
                             <img src={{ post.image.url }}/>
                             <div class="card-body">
                                 <h2 class="card-title text-4xl">{{ post.caption }}</h2>
-                                {% for hashtag in post.hashtags.all %}
-                                    <a class="font" href="/hashtag/{{ hashtag }}">#{{ hashtag.hashtag }}</a>
-                                {% endfor %}
-
+                                <div class="flex gap-2">
+                                    {% for hashtag in post.hashtags.all %}
+                                        <a class="underline decoration-secondary font"
+                                           href="/hashtag/{{ hashtag }}">#{{ hashtag.hashtag }}</a>
+                                    {% endfor %}
+                                </div>
                                 <div class="flex items-center justify-between">
                                     <div class="flex flex-row items-center">
                                         <a class="font-bold pr-2"

@@ -2,10 +2,10 @@ from django.contrib.auth import login as auth_login
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from .forms import FormSingup, FormLogin, CommentForm, ImageForm, PasswordForm, BioForm, EditPostForm, SearchForm, \
-    CategoriaForm
+    CategoryForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
-from .models import Profile, Post, Comment, Follow, Hashtag, Categoria
+from .models import Profile, Post, Comment, Follow, Hashtag, Category
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
@@ -18,10 +18,10 @@ def home(request):
             "friend": True,
             "profile": get_object_or_404(Profile, user=request.user),
             "posts": Post.objects.all().order_by("-date").filter(
-                categoria=get_object_or_404(Profile, user=request.user).categoria),
+                category=get_object_or_404(Profile, user=request.user).category),
             "hashtags": Hashtag.objects.all(),
-            "categorias": Categoria.objects.all(),
-            "categoria_id": 0,
+            "categories": Category.objects.all(),
+            "category_id": 0,
             "exist": True
         }
 
@@ -30,23 +30,23 @@ def home(request):
         ctx = {
             "friend": False,
             "posts": Post.objects.all().order_by("-date"),
-            "categorias": Categoria.objects.all(),
-            "categoria_id": 0,
+            "categories": Category.objects.all(),
+            "category_id": 0,
             "exist": False
         }
         return render(request, "home.html", ctx)
 
 
-def home_categoria(request, _id):
-    categoria = get_object_or_404(Categoria, id=_id)
+def home_category(request, _id):
+    category = get_object_or_404(Category, id=_id)
     if request.user.is_authenticated:
         ctx = {
             "friend": True,
             "profile": get_object_or_404(Profile, user=request.user),
-            "posts": Post.objects.all().order_by("-date").filter(categoria=categoria),
+            "posts": Post.objects.all().order_by("-date").filter(category=category),
             "hashtags": Hashtag.objects.all(),
-            "categorias": Categoria.objects.all(),
-            "categoria_id": _id,
+            "categories": Category.objects.all(),
+            "category_id": _id,
             "exist": True
         }
 
@@ -54,9 +54,9 @@ def home_categoria(request, _id):
     else:
         ctx = {
             "friend": False,
-            "posts": Post.objects.all().order_by("-date").filter(categoria=categoria),
-            "categorias": Categoria.objects.all(),
-            "categoria_id": _id,
+            "posts": Post.objects.all().order_by("-date").filter(category=category),
+            "categories": Category.objects.all(),
+            "category_id": _id,
             "exist": False
         }
         return render(request, "home.html", ctx)
@@ -73,7 +73,7 @@ def signup(request):
             email = formSignup.cleaned_data["email"]
             password = formSignup.cleaned_data["password"]
             confirmation = formSignup.cleaned_data["confirmation"]
-            categoria = formSignup.cleaned_data["categoria"]
+            category = formSignup.cleaned_data["category"]
 
             if password == confirmation:
                 if User.objects.filter(username=username).exists():
@@ -82,19 +82,19 @@ def signup(request):
                 elif User.objects.filter(email=email).exists():
                     return render(request, "signup.html",
                                   {"messages": "Email already exists.", "formSignup": formSignup})
-                elif categoria is None:
-                    return render(request, "signup.html", {"messages": "Seleciona Categoria", "formSignup": formSignup})
+                elif category is None:
+                    return render(request, "signup.html", {"messages": "Seleciona category", "formSignup": formSignup})
                 elif request.FILES:
                     photo = request.FILES["photo"]
                     user = User.objects.create_user(username=username, password=password, email=email)
-                    profile = Profile.objects.create(user=user, profile_pic=photo, categoria=categoria)
+                    profile = Profile.objects.create(user=user, profile_pic=photo, category=category)
                     profile.save()
                     auth_login(request, User.objects.get(username=username))
                     return redirect("home")
                 else:
                     user = User.objects.create_user(username=username, password=password, email=email)
                     user.save()
-                    profile = Profile.objects.create(user=user, categoria=categoria)
+                    profile = Profile.objects.create(user=user, category=category)
                     profile.save()
                     auth_login(request, user)
                     return redirect("home")
@@ -230,12 +230,12 @@ def editProfile(request, username):
                 utilizador.save()
                 sucesso = True
 
-    if request.method == "POST" and 'categoria' in request.POST:
-        formCategoria = CategoriaForm(request.POST)
-        if formCategoria.is_valid():
-            categoria = formCategoria.cleaned_data["categoria"]
-            if categoria:
-                utilizador.categoria = categoria
+    if request.method == "POST" and 'category' in request.POST:
+        formcategory = CategoryForm(request.POST)
+        if formcategory.is_valid():
+            category = formcategory.cleaned_data["category"]
+            if category:
+                utilizador.category = category
                 utilizador.save()
                 sucesso = True
 
@@ -243,7 +243,7 @@ def editProfile(request, username):
         ctx["formImage"] = ImageForm()
         ctx["formBio"] = BioForm()
         ctx["formPassword"] = PasswordForm()
-        ctx["formCategoria"] = CategoriaForm()
+        ctx["formcategory"] = CategoryForm()
 
         return render(request, "profileedit.html", ctx)
 
@@ -258,7 +258,7 @@ def postadd(request):
         caption = request.POST["caption"]
         photo = request.FILES["photo"]
         if caption and photo:
-            post = Post.objects.create(profile=profile, image=photo, caption=caption, categoria=profile.categoria)
+            post = Post.objects.create(profile=profile, image=photo, caption=caption, category=profile.category)
             for hashtag in Hashtag.objects.all():
                 if hashtag.hashtag in request.POST.keys():
                     post.add_hashtag(hashtag)
@@ -526,15 +526,15 @@ def search_filter(request):
     min_date = request.GET.get('min_date')
     max_date = request.GET.get('max_date')
     comments = request.GET.get('comments')
-    categoria = request.GET.get('categoria')
-    if categoria == "0":
-        categoria = None
+    category = request.GET.get('category')
+    if category == "0":
+        category = None
     posts = Post.objects.all()
     query_objects = Q()
     if query:
         query_objects |= Q(caption__contains=query)
-    if categoria:
-        query_objects |= Q(categoria=categoria)
+    if category:
+        query_objects |= Q(category=category)
     if likes:
         query_objects &= Q(like_count__gte=likes)
     if min_date:
@@ -557,7 +557,7 @@ def search_filter(request):
         "number_comments": Comment.objects.all().count(),
         "number_likes": count_likes_total(),
         "list_hashtags": list_hashtags,
-        "categorias": Categoria.objects.all(),
+        "categories": Category.objects.all(),
     }
 
     if len(posts) != 0:
@@ -616,9 +616,9 @@ def graphics(request, type):
     except ObjectDoesNotExist:
         user = None
 
-    if type in ["categoria", "hashtag"]:
-        if type == "categoria":
-            group_by = 'categoria__nome'
+    if type in ["category", "hashtag"]:
+        if type == "category":
+            group_by = 'category__nome'
         elif type == "hashtag":
             group_by = 'hashtags__hashtag'
 
@@ -652,9 +652,9 @@ def graphics_user(request, type):
     except ObjectDoesNotExist:
         user = None
 
-    if type in ["categoria", "hashtag", "date"]:
-        if type == "categoria":
-            group_by = 'categoria__nome'
+    if type in ["category", "hashtag", "date"]:
+        if type == "category":
+            group_by = 'category__nome'
         elif type == "hashtag":
             group_by = 'hashtags__hashtag'
 
@@ -694,7 +694,7 @@ def count_likes_total():
 def ctx_static():
     ctx = {
         "list_types": [
-            ("Categorias", "categoria"),
+            ("categories", "category"),
             ("Hashtags", "hashtag")
         ],
     }

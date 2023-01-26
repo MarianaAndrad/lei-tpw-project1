@@ -4,14 +4,14 @@
     <div class="container mx-auto flex-row space-x-between">
         <div class="flex justify-between">
             <div>
-                <small>Da plataforma</small>
+                <h1>Da plataforma</h1>
                 {% for title,type in list_types %}
                     <a class="btn btn-outline btn-primary" href="/graphics/{{ type }}"> {{ title }}</a>
                 {% endfor %}
             </div>
             <div>
                 {% if profile %}
-                    <h>Do utilizador</h>
+                    <h1>Do utilizador</h1>
                     {% for title,type in list_types %}
                         <a class="btn btn-outline btn-primary" href="/graphicsuser/{{ type }}"> {{ title }}</a>
                     {% endfor %}

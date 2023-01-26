@@ -2,21 +2,6 @@
 {% block content %}
 <form method="get" action="{% url 'search_filter' %}">
     <div class="flex flex-row my-auto gap-3 justify-between my-auto">
-        <!-- <div class="my-auto">
-            <div class="form-control">
-                <label class="label cursor-pointer" id="hot" name="hot">
-                  <span class="label-text">Hot</span>
-                  <input type="radio" name="radio" class="radio radio-info" checked id="radio" />
-                </label>
-              </div>
-              <div class="form-control">
-                <label class="label cursor-pointer" name="fresh" id="fresh">
-                  <span class="label-text">Fresh</span>
-                  <input type="radio" name="radio" class="radio radio-info" id ="radio" />
-                </label>
-            </div>
-        </div> -->
-
         <div class="my-auto">
             <labbel class="label gap-2">
                 <span class="label-text">Search</span>
@@ -40,13 +25,13 @@
         <label class="label gap-2">
             <span class="label-text">Reino Animal</span>
 
-            <select class="select select-primary " id="categoria" name ="categoria">
+            <select class="select select-primary " id="category" name ="category">
                 <option disabled selected value=0>Animal Type</option>
-                {% for categoria in categorias %}
-                    {%  if request.GET.categoria != categoria %}
-                        <option value="{{ categoria.id }}">{{ categoria }}</option>
+                {% for category in categories %}
+                    {%  if request.GET.category != category %}
+                        <option value="{{ category.id }}">{{ category }}</option>
                     {% else %}
-                        <option value="{{ categoria.id }}" selected>{{ categoria }}</option>
+                        <option value="{{ category.id }}" selected>{{ category }}</option>
                     {% endif %}
                 {% endfor %}
             </select>

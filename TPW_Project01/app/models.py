@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
-class Categoria(models.Model):
+class Category(models.Model):
     nome = models.CharField(max_length=100)
 
     def __str__(self):
@@ -12,7 +12,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_pic = models.ImageField(upload_to='profile_pics', blank=True, default= 'default.png')
     bio = models.TextField('Biografia', max_length=500, blank=True)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, blank=True, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
     
     def update_image(self, file):
         self.profile_pic.storage.delete(self.profile_pic.name)
@@ -47,7 +47,7 @@ class Post(models.Model):
     comment_count = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now_add=True)
     hashtags = models.ManyToManyField(Hashtag, related_name='hashtags', blank=True)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, blank=True, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.caption

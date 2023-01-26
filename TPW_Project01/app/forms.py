@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Categoria
+from .models import Category
 
 
 # *** This is the form for the user to register ***
@@ -40,11 +40,11 @@ class FormSingup(forms.Form):
                'id': 'bio',
                'name': 'bio', }))
 
-    categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=False, widget=forms.Select(
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, widget=forms.Select(
         attrs={'class': 'select select-bordered select-primary w-full',
-               'placeholder': 'categoria',
-               'id': 'categoria',
-               'name': 'categoria', }))
+               'placeholder': 'category',
+               'id': 'category',
+               'name': 'category', }))
 
 
 # *** This is the form for the user to login ***
@@ -126,13 +126,13 @@ class PasswordForm(forms.Form):
         }))
 
 
-# *** This is the form for the user to edit a categoria profile ***
-class CategoriaForm(forms.Form):
-    categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=False, widget=forms.Select(
+# *** This is the form for the user to edit a category profile ***
+class CategoryForm(forms.Form):
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, widget=forms.Select(
         attrs={'class': 'select select-bordered select-primary w-full',
-               'placeholder': 'categoria',
-               'id': 'categoria',
-               'name': 'categoria', }))
+               'placeholder': 'category',
+               'id': 'category',
+               'name': 'category', }))
 
 
 # *** This is the form for the user to edit a bio profile ***
