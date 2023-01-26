@@ -499,6 +499,7 @@ def listFollower(request, username):
         result.append((result_user.profile, following, followers))
     ctx = {
         #"form_search": SearchForm(),
+        "title": username + "'s Followers",
         "profile": user,
         "result": result,
         "hashtags": Hashtag.objects.all(),
@@ -517,6 +518,7 @@ def listFollowing(request, username):
         result.append((result_user.following, following, followers))
     ctx = {
         # "form_search": SearchForm(),
+        "title": username + "'s Following",
         "profile": user,
         "result": result,
         "hashtags": Hashtag.objects.all(),

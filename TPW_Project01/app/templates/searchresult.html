@@ -6,7 +6,12 @@
     {% csrf_token %}
     {{ form_search.search }}
 </form>
+
     <div class="container mx-auto">
+        {% if title%}
+            <h1 class="text-4xl font-bold text-center text-primary my-4">{{ title }}</h1>
+            
+        {% endif %}
         <div class="flex flex-col gap-4 place-items-center">
             {% if result %}
                 {% for result_user,following_count, followers_count in result %}
