@@ -582,6 +582,7 @@ def hashtag_list(request, hashtag):
     ctx = {
         'posts': posts,
         "hashtags": Hashtag.objects.all(),
+        "hashtagID": get_object_or_404(Hashtag, hashtag = hashtag).id,
     }
 
     try:

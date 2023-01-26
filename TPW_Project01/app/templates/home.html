@@ -2,17 +2,17 @@
 {% block content %}
 
     <div class="container flex justify-center gap-2 pb-2">
-        <a class="btn btn-outline btn-primary {% if category_id == 0 %} btn-active {% endif %}"
-           href="/">All</a>
          {% if categories %}
+            <a class="btn btn-outline btn-primary {% if category_id == 0 %} btn-active {% endif %}"
+            href="/">All</a>
             {% for category in categories %}
                 <a class="btn btn-outline btn-primary {% if category.id == category_id %}btn-active{% endif %}"
                 href="/{{ category.id }}/">{{ category }}</a>
             {% endfor %}
         {% else %}
             {% for hashtag in hashtags %}
-                <a class="btn btn-outline btn-primary {% if hashtag == hashtag_hashtag %}btn-active{% endif %}"
-                href="/hashtag/{{ hashtag }}/">{{ hashtag }}</a>
+                <a class="btn btn-outline btn-primary {% if hashtag.id == hashtagID %}btn-active{% endif %}"
+                href="/hashtag/{{ hashtag }}/">{{  hashtag }}</a>
             {% endfor %}
         {% endif %}
     </div>
