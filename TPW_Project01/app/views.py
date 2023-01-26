@@ -62,6 +62,9 @@ def home_category(request, _id):
 
 # *User
 def signup(request):
+    if request.user.is_authenticated:
+        category_id = profile_category(request.user)
+        return redirect("home_category", category_id)
     if request.method == "POST":
         formSignup = FormSingup(request.POST)
 
@@ -596,7 +599,6 @@ def hashtag_list(request, hashtag):
         'posts': posts,
         "hashtags": Hashtag.objects.all(),
         "hashtagID": get_object_or_404(Hashtag, hashtag = hashtag).id,
-        "profile": get_object_or_404(Profile, user=request.user)
     }
 
     try:
