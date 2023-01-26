@@ -26,9 +26,9 @@
             <span class="label-text">Animal Type</span>
 
             <select class="select select-primary " id="category" name ="category">
-                <option disabled selected value=0>Animal Type</option>
+                <option selected value = 0 >Animal Type</option>
                 {% for category in categories %}
-                    {%  if request.GET.category != category %}
+                    {%  if category.id != category_id %}
                         <option value="{{ category.id }}">{{ category }}</option>
                     {% else %}
                         <option value="{{ category.id }}" selected>{{ category }}</option>
@@ -93,7 +93,7 @@
 
     </div>
     <div class="lg:p-12 max-w-md max-w-xl lg:my-0 my-12 mx-auto p-6">
-        <button class="btn btn-block btn-primary btn-wide">Search</button>
+            <button class="btn btn-block btn-primary btn-wide">Search</button>
     </div>
 </form>
 
@@ -137,7 +137,29 @@
                 </div>
             {% endfor %}
         {% else %}
-                <p>No Results found</p>
+                {% if message %}
+                <div class="alert alert-error shadow-lg mt-2">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{{message}}</span>
+                    </div>
+                </div>
+                {% else %}
+                    <div class=" alert shadow-lg mt-2">
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>No Results found</span>
+                        </div>
+                    </div>
+                {% endif %}
                 <iframe src='//randomgoat.com/embed.php' width='500px' height='500px' class=" mx-auto"></iframe>
         {% endif %}
 

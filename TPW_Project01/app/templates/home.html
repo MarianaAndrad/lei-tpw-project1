@@ -53,7 +53,7 @@
                                                 </label>
                                             </a>
                                         {% endif %}
-                                        {% if exist %}
+                                        {% if profile %}
                                             <button class="btn btn-outline btn-error btn-like w-24"
                                                     value="{{ post.id }}"
                                                     id="btn_{{ post.id }}">
@@ -87,6 +87,7 @@
     </div>
     <script>
         $(document).on('click', '.btn-like', function (e) {
+            console.log('clicked')
             e.preventDefault();
             var post_id = $(this).val();
 

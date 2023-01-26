@@ -498,7 +498,7 @@ def listFollower(request, username):
         followers = Follow.objects.filter(following=result_user.profile).count()
         result.append((result_user.profile, following, followers))
     ctx = {
-        "form_search": SearchForm(),
+        #"form_search": SearchForm(),
         "profile": user,
         "result": result,
         "hashtags": Hashtag.objects.all(),
@@ -516,7 +516,7 @@ def listFollowing(request, username):
         followers = Follow.objects.filter(following=result_user.following).count()
         result.append((result_user.following, following, followers))
     ctx = {
-        "form_search": SearchForm(),
+        # "form_search": SearchForm(),
         "profile": user,
         "result": result,
         "hashtags": Hashtag.objects.all(),
@@ -532,22 +532,25 @@ def search_filter(request):
     max_date = request.GET.get('max_date')
     comments = request.GET.get('comments')
     category = request.GET.get('category')
-    if category == "0":
-        category = None
+
     posts = Post.objects.all()
     query_objects = Q()
     if query:
-        query_objects |= Q(caption__contains=query)
-    if category:
-        query_objects |= Q(category=category)
-    if likes:
+        query_objects &= Q(caption__contains=query)
+    if category!="0":
+        query_objects &= Q(category=category)
+    if likes and likes == "4":
         query_objects &= Q(like_count__gte=likes)
+    elif likes and likes != "0":
+        query_objects &= Q(like_count__lte=likes)
     if min_date:
         query_objects &= Q(date__gte=min_date)
     if max_date:
         query_objects &= Q(date__lte=max_date)
-    if comments:
+    if comments and comments == "4":
         query_objects &= Q(comment_count__gte=comments)
+    elif comments and comments != "0":
+        query_objects &= Q(comment_count__lte=comments)
 
     posts = posts.filter(query_objects)
 
@@ -563,10 +566,15 @@ def search_filter(request):
         "number_likes": count_likes_total(),
         "list_hashtags": list_hashtags,
         "categories": Category.objects.all(),
+        "category_id": category if category == None else int(category),
     }
 
     if len(posts) != 0:
         context["posts"] = posts
+
+    if max_date and max_date <= min_date:
+        message = "The maximum date must be greater than the minimum date."
+        context["message"] = message
 
     try:
         user = Profile.objects.get(user__username=request.user.username)
@@ -583,6 +591,7 @@ def hashtag_list(request, hashtag):
         'posts': posts,
         "hashtags": Hashtag.objects.all(),
         "hashtagID": get_object_or_404(Hashtag, hashtag = hashtag).id,
+        "profile": get_object_or_404(Profile, user=request.user)
     }
 
     try:
