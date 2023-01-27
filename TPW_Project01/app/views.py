@@ -595,9 +595,16 @@ def search_filter(request):
 
 def hashtag_list(request, hashtag):
     posts = Post.objects.filter(hashtags=get_object_or_404(Hashtag, hashtag=hashtag))
+    hashtag_numpost = {}
+    for hashtag in Hashtag.objects.all():
+        hashtag_numpost[hashtag.hashtag] = Post.objects.filter(hashtags=hashtag).count()
+    hashtag_numpost = sorted(hashtag_numpost.items(), key=lambda x: x[1], reverse=True)
+    top5_hashtags = hashtag_numpost[:5]
+    top5_hashtags = [x[0] for x in top5_hashtags]
     ctx = {
         'posts': posts,
         "hashtags": Hashtag.objects.all(),
+        "hashtags_top5" : top5_hashtags,
         "hashtagID": get_object_or_404(Hashtag, hashtag = hashtag).id,
     }
 

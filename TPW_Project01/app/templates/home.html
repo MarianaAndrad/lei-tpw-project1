@@ -10,7 +10,7 @@
                 href="/{{ category.id }}/">{{ category }}</a>
             {% endfor %}
         {% else %}
-            {% for hashtag in hashtags %}
+            {% for hashtag in hashtags_top5 %}
                 <a class="btn btn-outline btn-primary {% if hashtag.id == hashtagID %}btn-active{% endif %}"
                 href="/hashtag/{{ hashtag }}/">{{  hashtag }}</a>
             {% endfor %}
