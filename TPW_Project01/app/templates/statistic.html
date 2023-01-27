@@ -100,8 +100,15 @@
                         labels: config.labels,
                         datasets: [{
                             data: config.data,
-                            backgroundColor: (config.type === 'pie') ? ['#65c3c8', '#ef9fbc', '#eeaf3a', '#382800'] : 'rgba(255, 99, 132, 0.2)',
-                            borderColor: (config.type === 'pie') ? ['#65c3c8', '#ef9fbc', '#eeaf3a', '#382800'] : 'rgba(255, 99, 132, 1)',
+                            backgroundColor: (config.type === 'pie') ? ['#65c3c8', '#ef9fbc', '#eeaf3a', '#382800', 
+                                                                        '#4d4d4d', '#6699cc', '#ffcc33', '#993300', 
+                                                                        '#009966','#33ccff', '#ff9900', '#990000', 
+                                                                        '#003366', '#cc0099', '#666666', '#cccccc', 
+                                                                        '#ffffff', '#000000'] : 'rgba(255, 99, 132, 0.2)',
+                            borderColor: (config.type === 'pie') ? ['#65c3c8', '#ef9fbc', '#eeaf3a', '#382800','#4d4d4d', 
+                                                                    '#6699cc', '#ffcc33', '#993300', '#009966',
+                                                                    '#33ccff', '#ff9900', '#990000', '#003366', 
+                                                                    '#cc0099', '#666666', '#cccccc', '#ffffff', '#000000'] : 'rgba(255, 99, 132, 1)',
                             borderWidth: (config.type === 'bar') ? 2 : null
                         }]
                     },
