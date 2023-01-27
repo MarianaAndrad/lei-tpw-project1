@@ -541,6 +541,9 @@ def search_filter(request):
     comments = request.GET.get('comments')
     category = request.GET.get('category')
 
+    if category == None:
+        category = "0"
+
     posts = Post.objects.all()
     query_objects = Q()
     if query:
