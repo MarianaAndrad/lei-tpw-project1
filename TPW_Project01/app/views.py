@@ -621,6 +621,7 @@ def hashtag_list(request, hashtag):
 
 def statistic(request):
     ctx = ctx_static()
+    ctx["hashtags"] = Hashtag.objects.all()
     try:
         user = Profile.objects.get(user__username=request.user.username)
         ctx["profile"] = user
@@ -639,6 +640,7 @@ def statistic(request):
 
 def graphics(request, type):
     ctx = ctx_static()
+    ctx["hashtags"] = Hashtag.objects.all()
     try:
         user = Profile.objects.get(user__username=request.user.username)
         ctx["profile"] = user

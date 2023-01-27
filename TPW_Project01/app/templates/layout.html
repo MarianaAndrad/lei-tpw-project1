@@ -48,9 +48,9 @@
     {% else %}
         {% if request.path != "/login/" and request.path != "/signup/" %}
             <div class="flex-none">
-                <a href="{% url 'statistic' %}" class="btn btn-ghost normal-case text-3xl">
-                    <i class="fa-duotone fa-chart-simple"></i>
-                </a>
+                <a href="{% url 'statistic' %}" class="btn btn-primary">                                                                
+                    <i class="fa-solid fa-chart-simple fa-2xl"></i>
+                 </a>
                 <a href="{% url 'login' %}" class="btn btn-ghost normal-case text-3xl">
                     Login
                 </a>
